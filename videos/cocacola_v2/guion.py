@@ -5,6 +5,8 @@ más:
   cuerpo=(órgano, fase)  → escena interior del cuerpo (anatomia.py), con BYRON CAM reaccionando.
   cam=dict(...)          → pose de Byron en la BYRON CAM.
   kie=dict(prompt=...)   → clip de video de KIE (imagen→video) que reemplaza el arranque de la escena.
+  imagen=dict(nombre=..., prompt=...) → ilustración de KIE a pantalla completa (imagenes/<nombre>.png) con zoom lento;
+                           si además lleva kie=..., el clip arranca desde esa ilustración.
 
 Datos por lata (355 ml): 140 kcal, 39 g de azúcar, 34 mg de cafeína. 50 latas: 17,75 L, 1.950 g, 1.700 mg, 7.000 kcal.
 """
@@ -26,6 +28,15 @@ esc("Soy Byron, el ajolote que lo prueba todo para que tú no tengas que hacerlo
 esc("Cincuenta latas son casi dieciocho litros de gaseosa, casi dos kilos de azúcar y mil setecientos miligramos de cafeína. ¿Listo? ¡Vamos!",
     fondo="plano", byron=dict(pose="senala", x=440, boca="o", ojos="grandes"),
     tarjeta=dict(titulo="El reto", filas=[("Líquido", "17,7 L"), ("Azúcar", "1,95 kg"), ("Cafeína", "1.700 mg"), ("Calorías", "7.000")]))
+# ------------------------------------------------------------------ un poco de historia (ilustraciones KIE)
+esc("Pero antes, un poco de historia. La Coca-Cola la inventó en mil ochocientos ochenta y seis un farmacéutico de Atlanta llamado John Pemberton. ¡Al principio se vendía en farmacias, como un jarabe!",
+    imagen=dict(nombre="farmacia", prompt="The axolotl as an 1886 pharmacist in an old wooden pharmacy with glass jars on shelves, stirring a dark brown syrup in a big glass jar, warm lamp light."),
+    kie=dict(prompt="The pink cartoon axolotl pharmacist stirs the brown syrup in the glass jar, bubbles rise, he smiles proudly and looks at the camera, warm lamp light flickers. Keep the exact same flat 2D cartoon style, thick black outlines, same character design, no text."))
+esc("Hoy, la compañía vende cerca de dos mil millones de bebidas cada día, en más de doscientos países. Imagínate todas esas latas juntas.",
+    imagen=dict(nombre="mundo", prompt="The axolotl standing on top of a cartoon planet Earth that is covered in countless plain red soda cans, stars in the background, he looks amazed."))
+esc("¿Y de dónde salen las burbujas? Es dióxido de carbono disuelto a presión. Cuando abres la lata, la presión baja y el gas se escapa: ¡psssst!",
+    imagen=dict(nombre="burbujas", prompt="Close-up of the axolotl opening a plain red soda can, a big burst of fizz and giant bubbles explodes out of the can, his eyes wide with surprise."),
+    kie=dict(prompt="The soda can fizzes and a burst of big bubbles shoots upward and floats around the pink cartoon axolotl, who leans back surprised, bubbles pop. Keep the exact same flat 2D cartoon style, thick black outlines, same character design, no text."))
 
 # ------------------------------------------------------------------ boca
 esc("Lata uno. El primer trago ni siquiera ha llegado al estómago... y el ataque ya empezó. En tus dientes.",
@@ -34,6 +45,8 @@ esc("La Coca-Cola tiene un pH de alrededor de dos y medio: es casi tan ácida co
     cuerpo=("dientes", "acido"), cam=dict(pose="normal", ojos="grandes", boca="o"))
 esc("Encima, las bacterias de tu boca se dan un banquete con el azúcar... y fabrican todavía más ácido.",
     cuerpo=("dientes", "bacterias"), cam=dict(pose="panza", ojos="grandes"))
+esc("Truco de dentista: si vas a tomar gaseosa, mejor de una vez y no a sorbitos toda la tarde. Y espera unos treinta minutos antes de cepillarte, porque el esmalte queda blandito.",
+    imagen=dict(nombre="dentista", prompt="The axolotl dressed as a friendly dentist with a white coat and head mirror, holding a giant toothbrush next to a giant cartoon tooth, in a bright dental office."))
 
 # ------------------------------------------------------------------ estómago
 esc("Bajamos al estómago. Vacío, es más o menos del tamaño de un puño, y normalmente aguanta alrededor de un litro.",
@@ -55,12 +68,18 @@ esc("El páncreas da la alarma y suelta insulina: una especie de llave que abre 
     cuerpo=("pancreas", ""), cam=dict(pose="senala"))
 esc("Las células del hígado y de los músculos lo guardan como reserva. Pero esa bodega es pequeña: unos cien gramos en el hígado y unos cuatrocientos en los músculos.",
     cuerpo=("bodega", ""), cam=dict(pose="piensa", ojos="grandes"))
+esc("Para que te hagas una idea: treinta y nueve gramos de azúcar son como diez cubitos. ¡En una sola lata!",
+    imagen=dict(nombre="cubitos", prompt="The axolotl standing next to a tall tower of exactly ten big white sugar cubes stacked next to a plain red soda can on a kitchen table, he points at the tower with a shocked face."))
+esc("La Organización Mundial de la Salud recomienda menos de cincuenta gramos de azúcar libre al día, e idealmente menos de veinticinco. Una sola lata ya se pasa del ideal.",
+    imagen=dict(nombre="oms", prompt="The axolotl as a doctor holding a clipboard, standing next to a big kitchen scale where a pile of sugar heavily outweighs a small spoon, a red warning light glows."))
 
 # ------------------------------------------------------------------ cerebro
 esc("Lata cinco. Tu cerebro está de fiesta: el azúcar dispara dopamina, la química de la recompensa. ¡Por eso se siente tan rico!",
     cuerpo=("cerebro", "dopamina"), cam=dict(pose="celebra", ojos="feliz", boca="grande"))
 esc("Y la cafeína bloquea a la adenosina, la molécula que le dice al cerebro: 'estoy cansado'. Resultado: cero sueño.",
     cuerpo=("cerebro", "cafeina"), cam=dict(pose="normal", ojos="grandes"))
+esc("¿Y por qué tanta azúcar no empalaga? Por el ácido: le da un toque que equilibra el dulzor. Sin él, una lata sabría a jarabe puro.",
+    imagen=dict(nombre="balanza", prompt="The axolotl as a scientist in a lab coat holding a big balance scale, one side has a pile of sugar cubes, the other side a glowing yellow acid flask, both sides perfectly balanced."))
 
 # ------------------------------------------------------------------ corazón
 esc("Lata doce. Cuatrocientos ocho miligramos de cafeína. Ya pasé lo que la FDA considera seguro para un adulto en todo un día.",
@@ -75,6 +94,11 @@ esc("Lata veinte. Setecientos ochenta gramos de azúcar. Y aquí va un dato clav
     cuerpo=("higado", "fructosa"), cam=dict(pose="toma", panza=45))
 esc("Cuando el hígado se satura, convierte lo que sobra en grasa. Gotitas de grasa que se van acumulando... así empieza el hígado graso.",
     cuerpo=("higado", "grasa"), cam=dict(pose="triste", panza=45, ojos="cansado"))
+esc("Hablemos de calorías. Siete mil calorías son como tres días y medio de comida de un adulto promedio. ¡En un solo día... y sin masticar nada!",
+    imagen=dict(nombre="comida", prompt="The axolotl sitting at a long table with a mountain of food for three days: breakfasts, lunches and dinners piled up, plates stacked high, he looks overwhelmed."))
+esc("Y para quemar una sola lata tendrías que caminar unos treinta minutos. ¿Cincuenta latas? Más de veinticinco horas caminando sin parar.",
+    imagen=dict(nombre="camino", prompt="The axolotl walking on an endless desert road at sunset, cacti on the sides, the road disappears into the horizon, he looks tired but determined."),
+    kie=dict(prompt="The pink cartoon axolotl walks forward along the endless road, his little legs moving, the sun sets slowly, gentle camera tracking. Keep the exact same flat 2D cartoon style, thick black outlines, same character design, no text."))
 
 # ------------------------------------------------------------------ riñones
 esc("Lata veinticinco. ¡Casi nueve litros adentro! Los riñones filtran como locos, pero solo pueden sacar alrededor de un litro por hora.",
@@ -122,7 +146,12 @@ esc("Y esto no es solo un chiste: hay casos médicos de personas que tomaban ent
     tarjeta=dict(titulo="Casos reales", numero="4 a 6 L", unidad="de cola al día", x=1500, y=150, chica=True))
 esc("Si lo hiciera todos los días: diabetes tipo dos, hígado graso, caries y muchos kilos de más.",
     fondo="plano", byron=dict(pose="panza", x=440, panza=125, ojos="grandes"), icono=("calendario_latas", 1300, 450))
+esc("¿Y la versión cero? No tiene azúcar ni calorías: usa edulcorantes. Pero sigue siendo ácida y sigue teniendo cafeína, así que tus dientes y tu sueño igual lo sienten.",
+    imagen=dict(nombre="cero", prompt="The axolotl holding two plain soda cans, one red and one black, comparing them with a magnifying glass, thoughtful expression, simple kitchen background."))
 esc("La buena noticia: una gaseosa de vez en cuando no te va a hacer daño. El problema es el exceso. Si tienes sed... agua.",
     fondo="plano", byron=dict(pose="toma_agua", x=520, ojos="feliz"), icono=("botella", 1300, 520))
+esc("¿Tienes sed? Las mejores opciones son agua, agua con limón, o agua con gas sin azúcar si te encantan las burbujas.",
+    imagen=dict(nombre="agua", prompt="The axolotl happily holding a big glass of water with a lemon slice, next to a pitcher of water and a bottle of sparkling water, sunny fresh kitchen, he smiles."),
+    kie=dict(prompt="The pink cartoon axolotl happily drinks the glass of water with lemon, ice cubes clink, sparkles around him, he gives a satisfied smile. Keep the exact same flat 2D cartoon style, thick black outlines, same character design, no text."))
 esc("¿Qué quieres que pruebe la próxima vez? Escríbelo en los comentarios. ¡Y suscríbete, que a mí me vuelve a crecer la cola... pero los suscriptores no!",
     fondo="plano", byron=dict(pose="celebra", x=480, ojos="feliz", boca="grande"), suscribete=True)

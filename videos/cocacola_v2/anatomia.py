@@ -107,7 +107,8 @@ def burbujas(x0, x1, y0, y1, t, n=26, seed=3, vel=180, r0=8, r1=26, col="#FFFFFF
     for _ in range(n):
         x = r.uniform(x0, x1)
         sp = r.uniform(0.6, 1.4) * vel
-        y = y1 - ((r.uniform(0, y1 - y0) + t * sp) % (y1 - y0))
+        alto = max(y1 - y0, 1.0)
+        y = y1 - ((r.uniform(0, alto) + t * sp) % alto)
         rr = r.uniform(r0, r1)
         s.append(f'<circle cx="{f(x + 8 * math.sin(t * 3 + x))}" cy="{f(y)}" r="{f(rr)}" fill="{col}" fill-opacity="0.55" stroke="{INK}" stroke-width="3"/>')
     return "".join(s)

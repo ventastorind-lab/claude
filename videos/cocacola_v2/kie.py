@@ -7,6 +7,7 @@ Uso:
   python3 kie.py saldo
   python3 kie.py muestras                 # la primera línea con varias voces → voz_muestras/
   python3 kie.py voces --voz <voice_id>   # una pista por escena → voz/NN.mp3 (salta las que ya existen)
+  python3 kie.py imagenes                 # ilustraciones de las escenas con imagen=... → imagenes/<nombre>.png
   python3 kie.py clips                    # clips de las escenas con kie=... → clips/NN.mp4
 """
 import json
@@ -21,6 +22,11 @@ API = "https://api.kie.ai/api/v1"
 SUBIDA = "https://kieai.redpandaai.co/api/file-stream-upload"
 MODELO_TTS = "elevenlabs/text-to-speech-multilingual-v2"
 MODELO_VIDEO = "kling/v2-1-standard"
+MODELO_IMAGEN = "nano-banana-pro"
+REFERENCIA = os.path.join(AQUI, "..", "..", "personajes", "nuevos", "01_byron.png")
+ESTILO = (" Keep this exact pink cartoon axolotl character design (white headband with red star, bandage on cheek, pink gills,"
+          " stick arms and legs). Flat 2D cartoon style, thick black outlines, bright friendly colors, wide 16:9 composition,"
+          " absolutely no text, no letters, no logos, no brand names.")
 # voces prediseñadas de ElevenLabs (IDs públicos); todas hablan español con el modelo multilingüe
 VOCES = {
     "liam": "TX3LPaxmHKxFdv7VOQHJ",      # joven, enérgico
@@ -108,6 +114,13 @@ def tts(texto, voz, destino, estabilidad=0.35, similitud=0.8, estilo=0.45, veloc
     return descargar(urls[0], destino)
 
 
+def imagen(prompt, destino, ref_url):
+    tarea = crear_tarea(MODELO_IMAGEN, {"prompt": prompt + ESTILO, "image_input": [ref_url], "aspect_ratio": "16:9",
+                                        "resolution": "2K", "output_format": "png"})
+    urls = esperar(tarea, 900)
+    return descargar(urls[0], destino)
+
+
 def clip(imagen, prompt, destino):
     url = subir(imagen)
     tarea = crear_tarea(MODELO_VIDEO, {"prompt": prompt, "image_url": url, "duration": "5",
@@ -139,9 +152,21 @@ def main():
             if os.path.exists(destino):
                 continue
             print(i, tts(texto, voz, destino), flush=True)
+    elif cmd == "imagenes":
+        ref = None
+        for i, (texto, spec) in enumerate(_guion()):
+            if "imagen" not in spec:
+                continue
+            destino = os.path.join(AQUI, "imagenes", spec["imagen"]["nombre"] + ".png")
+            if os.path.exists(destino):
+                continue
+            ref = ref or subir(REFERENCIA)
+            print(i, imagen(spec["imagen"]["prompt"], destino, ref), flush=True)
     elif cmd == "clips":
         sys.path.insert(0, AQUI)
         import render
+        from concurrent.futures import ThreadPoolExecutor
+        pendientes = []
         for i, (texto, spec) in enumerate(_guion()):
             if "kie" not in spec:
                 continue
@@ -149,8 +174,21 @@ def main():
             if os.path.exists(destino):
                 continue
             img = os.path.join(AQUI, "clips", f"inicio_{i:02d}.png")
-            render.cuadro_inicial(i, img)
-            print(i, clip(img, spec["kie"]["prompt"], destino), flush=True)
+            if "imagen" in spec:
+                from PIL import Image
+                os.makedirs(os.path.dirname(img), exist_ok=True)
+                Image.open(os.path.join(AQUI, "imagenes", spec["imagen"]["nombre"] + ".png")).convert("RGB").resize((1920, 1080)).save(img)
+            else:
+                render.cuadro_inicial(i, img)
+            pendientes.append((i, img, spec["kie"]["prompt"], destino))
+
+        def uno(p):
+            try:
+                print(p[0], clip(*p[1:]), flush=True)
+            except Exception as e:  # noqa: BLE001
+                print(p[0], "ERROR", e, flush=True)
+        with ThreadPoolExecutor(4) as ex:
+            list(ex.map(uno, pendientes))
     else:
         sys.exit(__doc__)
     try:

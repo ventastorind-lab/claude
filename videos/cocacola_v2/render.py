@@ -42,6 +42,8 @@ FPS_CLIP = 24
 # ---------------------------------------------------------------- subtítulos virales
 def subtitulos(texto, t, vdur):
     palabras = texto.split()
+    if not palabras:
+        return ""
     pesos = [len(p) + 1 + (5 if p[-1] in ",;:" else 0) + (9 if p[-1] in ".?!" else 0) for p in palabras]
     tot = sum(pesos)
     pos = c01((t - 0.1) / max(0.5, vdur - 0.35)) * tot
@@ -120,14 +122,66 @@ def frame_clip(i, t):
         return "data:image/jpeg;base64," + base64.b64encode(fh.read()).decode()
 
 
+_IMG = {}
+
+
+def img_uri(ruta):
+    """Imagen reducida a 1920x1080 en JPG (data URI), con caché por proceso."""
+    if ruta not in _IMG:
+        import io
+        from PIL import Image
+        buf = io.BytesIO()
+        Image.open(ruta).convert("RGB").resize((W, H), Image.LANCZOS).save(buf, "JPEG", quality=90)
+        _IMG[ruta] = "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode()
+    return _IMG[ruta]
+
+
+def dur_clip(i):
+    carpeta = os.path.join(AQUI, "clips", f"{i:02d}_cuadros")
+    return len(os.listdir(carpeta)) / FPS_CLIP if os.path.isdir(carpeta) else 0.0
+
+
+def ilustracion(i, e, t, dur):
+    """Escena con ilustración de KIE: zoom lento (Ken Burns); si hay clip, sigue desde su último cuadro."""
+    dc = dur_clip(i) if "kie" in e else 0.0
+    if dc and t < dc and frame_clip(i, t):
+        return f'<image href="{frame_clip(i, t)}" x="0" y="0" width="{W}" height="{H}"/>'
+    if dc and t >= dc:
+        ruta = os.path.join(AQUI, "clips", f"{i:02d}_cuadros", f"{int(dc * FPS_CLIP):04d}.jpg")
+        with open(ruta, "rb") as fh:
+            href = "data:image/jpeg;base64," + base64.b64encode(fh.read()).decode()
+        t0 = dc
+    else:
+        href = img_uri(os.path.join(AQUI, "imagenes", e["imagen"]["nombre"] + ".png"))
+        t0 = 0.0
+    k = 1.0 + 0.07 * (t - t0) / max(dur - t0, 1)
+    ox, oy = e["imagen"].get("foco", (960, 540))
+    s = (f'<rect width="{W}" height="{H}" fill="#000000"/><g transform="translate({ox} {oy}) scale({k:.4f}) translate({-ox} {-oy})">'
+         f'<image href="{href}" x="0" y="0" width="{W}" height="{H}"/></g>')
+    if t < 0.25:
+        s += f'<rect width="{W}" height="{H}" fill="#FFFFFF" opacity="{f(1 - t / 0.25)}"/>'
+    return s
+
+
+def previa(i):
+    """Escena anterior que no sea ilustración (para que latas, contador y panza continúen bien)."""
+    for j in range(i - 1, -1, -1):
+        if "imagen" not in GU.E[j][1]:
+            return GU.E[j][1]
+    return None
+
+
 def escena(i, narr, e, prev, t, dur, vdur):
+    if "imagen" in e:
+        cuerpo_svg = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}">{ilustracion(i, e, t, dur)}'
+        return cuerpo_svg + subtitulos(narr, t, vdur) + "</svg>"
     if "cuerpo" in e:
         dentro = cuerpo(e, t, dur)
         if (not prev or "cuerpo" not in prev) and t < 0.6:
             dentro = iris(dentro, t)
         cuerpo_svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}">{HV.DEFS}{dentro}')
     else:
-        cuerpo_svg = CA.escena_a(i, narr, e, prev or {}, t, dur).replace("</svg>", "")
+        cuerpo_svg = CA.escena_a(i, narr, e, previa(i) or {}, t, dur).replace("</svg>", "")
     clipf = frame_clip(i, t) if "kie" in e else None
     if clipf:
         cuerpo_svg += f'<image href="{clipf}" x="0" y="0" width="{W}" height="{H}" preserveAspectRatio="xMidYMid slice"/>'
@@ -184,6 +238,8 @@ def voces_kie():
 
 
 def eventos(e, prev, dur):
+    if "imagen" in e:
+        return [(0.0, "swoosh", 0.5)]
     if "cuerpo" not in e:
         return CA.eventos_sfx(e, prev, dur)
     org, fase = e["cuerpo"]
@@ -230,7 +286,7 @@ def main():
         prev = GU.E[k - 1][1] if k else None
         i0 = int(SR * t0)
         voz[i0:i0 + len(v)] += v
-        for ts, nombre, vol in eventos(e, prev, d):
+        for ts, nombre, vol in eventos(e, prev if "cuerpo" in e else previa(k), d):
             snd = A.SFX[nombre] * vol * 0.55
             j = i0 + int(SR * ts)
             if 0 <= j < len(efectos):
