@@ -347,7 +347,7 @@ def tarjeta(titulo="", numero=None, unidad="", filas=None, barras=None, unidad_b
          f'<text x="{fmt(x0+w/2)}" y="{y0+63}" text-anchor="middle" font-family="Arial Black, Arial" font-weight="900" font-size="48" fill="#FFFFFF">{escape(titulo)}</text>']
     cx = x0 + w / 2
     if numero is not None:
-        fs = 130 if chica else 170
+        fs = min(130 if chica else 170, int((w - 60) / (len(numero) * 0.64)))
         s.append(f'<text x="{fmt(cx)}" y="{y0+h_tit+(150 if chica else 190)}" text-anchor="middle" font-family="Arial Black, Arial" font-weight="900" font-size="{fs}" fill="{INK}">{escape(numero)}</text>')
         lineas = envolver(unidad, 40, w - 60)
         for i, l in enumerate(lineas):
