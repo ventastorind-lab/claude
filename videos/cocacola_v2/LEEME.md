@@ -5,7 +5,7 @@
 - `kie.py`: voz ElevenLabs vía KIE y clips imagen→video (Kling).
 - `render.py`: arma el video con subtítulos estilo viral (palabra activa en amarillo).
 
-## Cuando KIE esté habilitado (KIE_API_KEY + dominios permitidos, sesión nueva)
+## Cuando KIE esté habilitado (secreto de red Bearer para api.kie.ai, *.redpandaai.co y *.aiquickdraw.com; sesión nueva)
 
 ```bash
 cd videos/cocacola_v2

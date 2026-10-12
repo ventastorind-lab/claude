@@ -1,8 +1,7 @@
 """Cliente KIE para el video de Byron v2: voz (ElevenLabs vía KIE) y clips de video (imagen → video).
 
-Requiere la variable de entorno KIE_API_KEY y acceso de red a:
-  api.kie.ai, kieai.redpandaai.co (subida de archivos) y los dominios donde KIE entrega resultados
-  (p. ej. tempfile.aiquickdraw.com / tempfile.redpandaai.co).
+Clave: un "secreto de red" del entorno (Bearer) para api.kie.ai, *.redpandaai.co y *.aiquickdraw.com,
+o la variable KIE_API_KEY si se corre en un computador propio.
 
 Uso:
   python3 kie.py saldo
@@ -31,15 +30,11 @@ VOCES = {
 }
 
 
-def _clave():
-    k = os.environ.get("KIE_API_KEY")
-    if not k:
-        sys.exit("Falta KIE_API_KEY en el entorno (configúrala en los ajustes del entorno, no en el chat).")
-    return k
-
-
 def _peticion(metodo, url, cuerpo=None, cabeceras=None, datos=None):
-    h = {"Authorization": f"Bearer {_clave()}"}
+    # Con un "secreto de red" en el entorno, el proxy agrega la clave por su cuenta;
+    # KIE_API_KEY solo se usa si existe (p. ej. al correrlo en tu propio computador).
+    k = os.environ.get("KIE_API_KEY")
+    h = {"Authorization": f"Bearer {k}"} if k else {}
     if cuerpo is not None:
         datos = json.dumps(cuerpo).encode()
         h["Content-Type"] = "application/json"
