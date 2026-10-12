@@ -34,16 +34,18 @@ pop, prog, ease_out, ease_back, lerp, c01, f = A.pop, A.prog, A.ease_out, A.ease
 
 # ---------------------------------------------------------------- personajes de ficha (sin el marco de la ficha)
 PJ.ficha = lambda bg, acento, etiqueta, nombre, frase, cuerpo: cuerpo
-CUERPOS = {"gertrudis": PJ.gertrudis(), "tornillo": PJ.don_tornillo(), "tinto": PJ.tinto(), "socrates": PJ.socrates()}
-ALTO = {"gertrudis": 760, "tornillo": 700, "tinto": 650, "socrates": 750, "byron": 760, "rayo": 740}
-NOMBRES = {"gertrudis": "Doña Gertrudis", "tornillo": "Don Tornillo", "tinto": "Tinto", "socrates": "Sócrates", "byron": "Byron", "rayo": "Rayo"}
+CUERPOS = {"gertrudis": PJ.gertrudis(), "tornillo": PJ.don_tornillo(), "tinto": PJ.tinto(), "socrates": PJ.socrates(), "buho": PJ.doctora_buho()}
+ALTO = {"gertrudis": 760, "tornillo": 700, "tinto": 650, "socrates": 750, "byron": 760, "rayo": 740, "billetin": 680, "buho": 820}
+NOMBRES = {"gertrudis": "Doña Gertrudis", "tornillo": "Don Tornillo", "tinto": "Tinto", "socrates": "Sócrates", "byron": "Byron", "rayo": "Rayo", "billetin": "Billetín", "buho": "Dra. Búho"}
 
 VOCES = {  # motor, id, velocidad, tono, filtro
     "byron": ("kokoro", 53, 1.12, 1.19, ""),
     "gertrudis": ("kokoro", 28, 1.0, 0.95, ""),
     "tornillo": ("kokoro", 29, 0.95, 0.86, ""),
     "tinto": ("kokoro", 29, 1.05, 1.0, ",highpass=f=260,lowpass=f=3600"),
-    "socrates": ("piper", None, 1.0, 1.0, ""),
+    "socrates": ("piper", "vits-piper-es_ES-sharvard-medium", 1.0, 1.0, ""),
+    "billetin": ("piper", "vits-piper-es_MX-claude-high", 1.12, 1.25, ""),
+    "buho": ("piper", "vits-piper-es_AR-daniela-high", 1.0, 1.0, ""),
 }
 
 
@@ -71,8 +73,13 @@ def personaje(nombre, x, k, t, habla, spec, idx):
     else:
         mira = -1 if (x > 960 and nombre in ("tinto",)) else 1
         sq = 1 + (0.03 * math.sin(t * 15) if habla else 0)
+        if nombre == "billetin":
+            v0, v1 = spec.get("billetin", (1.0, 1.0))
+            cuerpo = PJ.billetin(lerp(v0, v1, ease_out(prog(t, 0.8, 2.2))))
+        else:
+            cuerpo = CUERPOS[nombre]
         s = (f'<g transform="translate({f(x)} {f(GY + dy)}) scale({f(k * mira)} {f(k / sq)}) translate(-600 -970)">'
-             f'{CUERPOS[nombre]}</g>')
+             f'{cuerpo}</g>')
     if habla:
         hx, hy = x + 150 * k, GY - ALTO[nombre] * k + 40
         a = 0.5 + 0.5 * math.sin(t * 10)
@@ -558,11 +565,24 @@ def generar_voces(tts_dir, lineas, tmp):
     kok = sherpa_onnx.OfflineTts(sherpa_onnx.OfflineTtsConfig(model=sherpa_onnx.OfflineTtsModelConfig(kokoro=sherpa_onnx.OfflineTtsKokoroModelConfig(
         model=f"{k}/model.onnx", voices=f"{k}/voices.bin", tokens=f"{k}/tokens.txt", data_dir=f"{k}/espeak-ng-data",
         dict_dir=f"{k}/dict", lexicon=f"{k}/lexicon-us-en.txt,{k}/lexicon-zh.txt", lang="es"), num_threads=4)))
-    piper, sid_p = _piper_masculino(tts_dir)
+    piper_soc, sid_p = _piper_masculino(tts_dir)
+    pipers = {"vits-piper-es_ES-sharvard-medium": (piper_soc, sid_p)}
+
+    def _piper(nombre):
+        if nombre not in pipers:
+            m = os.path.join(tts_dir, nombre)
+            onnx = [x for x in os.listdir(m) if x.endswith(".onnx")][0]
+            pipers[nombre] = (sherpa_onnx.OfflineTts(sherpa_onnx.OfflineTtsConfig(model=sherpa_onnx.OfflineTtsModelConfig(
+                vits=sherpa_onnx.OfflineTtsVitsModelConfig(model=f"{m}/{onnx}", tokens=f"{m}/tokens.txt", data_dir=f"{m}/espeak-ng-data"), num_threads=4))), 0)
+        return pipers[nombre]
     voces = []
     for n, (quien, texto, _) in enumerate(lineas):
         motor, sid, vel, tono, filtro = VOCES[quien]
-        a = kok.generate(texto, sid=sid, speed=vel) if motor == "kokoro" else piper.generate(texto, sid=sid_p, speed=vel)
+        if motor == "kokoro":
+            a = kok.generate(texto, sid=sid, speed=vel)
+        else:
+            tts_p, sp = _piper(sid)
+            a = tts_p.generate(texto, sid=sp, speed=vel)
         y = np.array(a.samples, dtype=np.float32)
         ruta = os.path.join(tmp, f"v{n}")
         sf.write(ruta + ".in.wav", y, a.sample_rate)

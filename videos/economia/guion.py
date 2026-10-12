@@ -5,7 +5,7 @@ Hablantes: byron, gertrudis, tornillo, tinto, socrates. Rayo nunca habla.
 """
 
 # Repartos frecuentes (x de cada personaje en pantalla)
-TODOS = [("gertrudis", 300), ("tornillo", 620), ("byron", 960), ("tinto", 1290), ("socrates", 1620)]
+TODOS = [("gertrudis", 250), ("tornillo", 500), ("billetin", 740), ("byron", 960), ("buho", 1190), ("tinto", 1430), ("socrates", 1680)]
 
 L = []
 
@@ -21,8 +21,8 @@ def duo(a, xa, b, xb):
 # ------------------------------------------------------------------ ACTO 1 · Intro
 l("byron", "¡Hola, hola! Soy Byron. Hoy no me voy a comer nada raro... hoy voy a hacer algo mucho más loco: ¡imprimir dinero infinito y regalárselo a todo Pueblo Escondido!",
   fondo="pueblo", reparto=[("byron", 520)], escala=0.75, titulo=("DINERO INFINITO", "¿Qué pasaría?"))
-l("byron", "Y esta vez no estoy solo. Les presento a mis amigos: Doña Gertrudis, Don Tornillo, el detective Tinto, el filósofo Sócrates... y Rayo, que nunca habla.",
-  fondo="pueblo", reparto=TODOS + [("rayo", 1820)], escala=0.5, presentacion=True)
+l("byron", "Y esta vez no estoy solo. Les presento a mis amigos: Doña Gertrudis, Don Tornillo, Billetín, la Doctora Búho, el detective Tinto, el filósofo Sócrates... y Rayo, que nunca habla.",
+  fondo="pueblo", reparto=TODOS + [("rayo", 1860)], escala=0.42, presentacion=True)
 l("gertrudis", "¡Mijo, ya lo vi todo desde el dron! ¿Dinero gratis para todos? ¡Yo me apunto!",
   fondo="pueblo", reparto=duo("gertrudis", 600, "byron", 1250), escala=0.68)
 l("tornillo", "En mis tiempos, el dinero se ganaba trabajando. Esto me huele a problema.",
@@ -42,6 +42,8 @@ l("socrates", "El dinero sirve para tres cosas: para intercambiar, para ponerle 
   tarjeta=dict(titulo="El dinero sirve para…", filas=[("1. Intercambiar", "✔"), ("2. Poner precios", "✔"), ("3. Ahorrar valor", "✔")]))
 l("socrates", "Pero ojo: un billete es solo papel. Vale porque todos confiamos en que mañana alguien lo va a aceptar. El dinero... es confianza.",
   fondo="plano", reparto=[("socrates", 420)], escala=0.68, billete_grande=(1250, 450, "$ 1.000"))
+l("billetin", "¡Exacto! Mucho gusto, soy Billetín, un billete de dos mil pesos. Por fuera soy papel... pero por dentro soy pura confianza.",
+  fondo="plano", reparto=duo("socrates", 420, "billetin", 1300), escala=0.68)
 l("byron", "¿Y quién imprime el dinero de verdad? En Colombia, el Banco de la República. En otros países, su banco central.",
   fondo="banco", reparto=[("byron", 420)], escala=0.68)
 l("tornillo", "Y no imprimen lo que se les antoja, muchacho. Tienen reglas, justamente para que no pase lo que vas a hacer tú.",
@@ -51,7 +53,7 @@ l("tornillo", "Y no imprimen lo que se les antoja, muchacho. Tienen reglas, just
 l("byron", "¡Demasiada teoría! Les presento... ¡la Imprimidora tres mil! Imprime un millón de pesos por segundo.",
   fondo="sotano", reparto=[("byron", 420)], escala=0.7, impresora=(1250, 640), onomatopeya=("¡BRRRR!", 1450, 260))
 l("byron", "¡Un millón para cada habitante de Pueblo Escondido! ¡Dinero para todos!",
-  fondo="pueblo", reparto=TODOS, escala=0.5, lluvia_billetes=True, todos_felices=True)
+  fondo="pueblo", reparto=TODOS, escala=0.44, lluvia_billetes=True, todos_felices=True)
 l("byron", "Rayo se encarga de repartirlo. Rápido, puntual... y sin decir una sola palabra.",
   fondo="pueblo", rayo_moto=True, carretilla=(1450, 900))
 l("gertrudis", "¡Ay, qué felicidad! Con este millón me voy a comprar todas las arepas del mercado.",
@@ -71,6 +73,8 @@ l("tornillo", "Si todos quieren mis tornillos y no me alcanzan, pues los subo. A
   fondo="ferreteria", reparto=[("tornillo", 500)], escala=0.7, precio=("TORNILLO", 500, 1500))
 l("gertrudis", "¡¿Seis mil pesos por una arepa?! ¡Esto es un robo!",
   fondo="mercado", reparto=[("gertrudis", 420)], escala=0.68, precio=("AREPA", 2000, 6000), enojada=True)
+l("billetin", "¡Ay, no! Antes yo alcanzaba para una arepa entera... ¡y ahora no alcanzo ni para un pedacito!",
+  fondo="mercado", reparto=[("billetin", 420)], escala=0.7, billetin=(1.0, 0.65), precio=("AREPA", 6000, 6000))
 l("byron", "¡No se preocupen! ¡Imprimo otro millón para cada uno!",
   fondo="sotano", reparto=[("byron", 420)], escala=0.7, impresora=(1250, 640), onomatopeya=("¡BRRRR!", 1450, 260))
 l("byron", "Y entonces... la arepa subió a veinte mil. Espera... ¿por qué no funciona?",
@@ -83,10 +87,12 @@ l("tinto", "El culpable tiene nombre: inflación. Es cuando los precios de casi 
   fondo="oficina", reparto=[("tinto", 420)], escala=0.7, expediente=("SOSPECHOSO", "INFLACIÓN"))
 l("tinto", "Y la víctima es el poder de compra: con el mismo billete, cada vez puedes comprar menos cosas.",
   fondo="oficina", reparto=[("tinto", 420)], escala=0.7, poder_compra=True)
-l("tinto", "Para medirla, en Colombia el DANE revisa los precios de una canasta de productos: comida, arriendo, transporte, salud, educación... Eso se llama el IPC.",
-  fondo="oficina", reparto=[("tinto", 420)], escala=0.7, canasta=(1250, 560))
-l("tinto", "Si la canasta costaba cien mil pesos y un año después cuesta ciento diez mil, la inflación de ese año fue del diez por ciento.",
-  fondo="oficina", reparto=[("tinto", 420)], escala=0.7,
+l("billetin", "¡Esa víctima soy yo! Sigo diciendo dos mil pesos... pero cada día valgo un poquito menos.",
+  fondo="oficina", reparto=duo("tinto", 420, "billetin", 1300), escala=0.66, billetin=(0.8, 0.5))
+l("buho", "Si me permite, detective: para medirla, en Colombia el DANE revisa los precios de una canasta de productos: comida, arriendo, transporte, salud, educación... Eso se llama el IPC.",
+  fondo="oficina", reparto=duo("tinto", 300, "buho", 700), escala=0.6, canasta=(1350, 560))
+l("buho", "Si la canasta costaba cien mil pesos y un año después cuesta ciento diez mil, la inflación de ese año fue del diez por ciento. Primero los datos, después las opiniones.",
+  fondo="oficina", reparto=[("buho", 420)], escala=0.62,
   tarjeta=dict(titulo="Inflación = 10 %", barras=[("Año 1", 100000, 110000, "#90A4AE"), ("Año 2", 110000, 110000, "#E53935")], unidad_barra="$"))
 l("tinto", "Pista número uno: demasiado dinero persiguiendo muy pocos productos. Exactamente lo que hizo Byron con su impresora.",
   fondo="oficina", reparto=duo("tinto", 420, "byron", 1450), escala=0.65, pista=1, byron_ojos="grandes")
@@ -121,6 +127,8 @@ l("byron", "Otro caso: Zimbabue, en dos mil ocho. El gobierno imprimió tanto di
   fondo="historia", pais=("ZIMBABUE", "2008", "zimbabue"), reparto=[("byron", 420)], escala=0.7, lluvia_billetes=True)
 l("gertrudis", "¡Mijo! ¿Ese billete dice cien billones? ¡Con eso me compro el barrio!",
   fondo="historia", pais=("ZIMBABUE", "2008", "zimbabue"), reparto=[("gertrudis", 420)], escala=0.7, billete_grande=(1250, 450, "100 BILLONES"))
+l("billetin", "¡Primo! ¿Qué te pasó? ¡Tienes catorce ceros y no vales nada!",
+  fondo="historia", pais=("ZIMBABUE", "2008", "zimbabue"), reparto=[("billetin", 420)], escala=0.7, billetin=(0.6, 0.6), billete_grande=(1250, 450, "100 BILLONES"))
 l("tinto", "Ni el barrio, ni la cuadra. A comienzos de dos mil nueve sacaron un billete de cien billones de dólares zimbabuenses... y meses después, el país dejó de usar su propia moneda.",
   fondo="historia", pais=("ZIMBABUE", "2009", "zimbabue"), reparto=[("tinto", 420)], escala=0.7, billete_grande=(1250, 450, "100 BILLONES"), tachado=True)
 l("tinto", "El economista Steve Hanke estimó que en noviembre de dos mil ocho los precios subieron unos setenta y nueve mil millones por ciento... en un solo mes.",
@@ -146,16 +154,18 @@ l("tinto", "Y no hace falta ir tan lejos. En Colombia, la inflación de dos mil 
 l("tinto", "Y los alimentos subieron mucho más: casi un veintiocho por ciento en ese año.",
   fondo="mercado", reparto=[("tinto", 420)], escala=0.7, precio=("AREPA", 2000, 2560),
   tarjeta=dict(titulo="Colombia · 2022", barras=[("Inflación total", 13.12, 27.81, "#90A4AE"), ("Alimentos", 27.81, 27.81, "#E53935")], unidad_barra="%"))
-l("byron", "¿Y quién nos defiende de la inflación? El banco central. En Colombia, el Banco de la República busca que la inflación esté cerca del tres por ciento al año.",
-  fondo="banco", reparto=[("byron", 420)], escala=0.68, tarjeta=dict(titulo="Meta BanRep", numero="≈ 3 %", unidad="de inflación al año", x=1350, y=170, chica=True))
-l("socrates", "Su herramienta principal son las tasas de interés. Si la inflación sube, suben las tasas: los préstamos se encarecen, la gente gasta un poco menos y los precios se calman.",
-  fondo="banco", reparto=[("socrates", 420)], escala=0.68, perilla=True)
+l("byron", "¿Y quién nos defiende de la inflación?",
+  fondo="banco", reparto=duo("byron", 420, "buho", 1500), escala=0.62, byron_ojos="grandes")
+l("buho", "Para eso estamos los bancos centrales. Soy la Doctora Búho. En Colombia, el Banco de la República busca que la inflación esté cerca del tres por ciento al año.",
+  fondo="banco", reparto=[("buho", 420)], escala=0.62, tarjeta=dict(titulo="Meta BanRep", numero="≈ 3 %", unidad="de inflación al año", x=1350, y=170, chica=True))
+l("buho", "Mi herramienta principal son las tasas de interés. Si la inflación sube, suben las tasas: los préstamos se encarecen, la gente gasta un poco menos y los precios se calman.",
+  fondo="banco", reparto=[("buho", 420)], escala=0.62, perilla=True)
 l("tornillo", "A finales de dos mil veintidós, el Banco de la República subió su tasa al doce por ciento. Más caro para los que debíamos plata, pero necesario para frenar los precios.",
   fondo="ferreteria", reparto=[("tornillo", 420)], escala=0.7, tarjeta=dict(titulo="Tasa BanRep", numero="12 %", unidad="diciembre de 2022", x=1350, y=170, chica=True))
 l("byron", "¿Y por qué no apuntan a cero por ciento de inflación?",
-  fondo="plano", reparto=duo("byron", 520, "socrates", 1380), escala=0.65, byron_ojos="grandes", burbuja_pensar=(950, 230))
-l("socrates", "Porque un poquito de inflación es normal en una economía que crece. Y lo contrario también es peligroso: si los precios bajan siempre, la gente deja de comprar esperando que todo sea más barato, y la economía se frena. Eso se llama deflación.",
-  fondo="plano", reparto=[("socrates", 420)], escala=0.68, grafica=dict(titulo="Deflación", puntos=[3, 2.6, 2.1, 1.6, 1.2], x=1100, y=150, color="#1E88E5"))
+  fondo="plano", reparto=duo("byron", 520, "buho", 1380), escala=0.65, byron_ojos="grandes", burbuja_pensar=(950, 230))
+l("buho", "Porque un poquito de inflación es normal en una economía que crece. Y lo contrario también es peligroso: si los precios bajan siempre, la gente deja de comprar esperando que todo sea más barato, y la economía se frena. Eso se llama deflación.",
+  fondo="plano", reparto=[("buho", 420)], escala=0.62, grafica=dict(titulo="Deflación", puntos=[3, 2.6, 2.1, 1.6, 1.2], x=1100, y=150, color="#1E88E5"))
 
 # ------------------------------------------------------------------ ACTO 7 · Consejos y cierre
 l("gertrudis", "¿Y entonces qué hago con mis ahorros, mijo?",
@@ -172,10 +182,12 @@ l("byron", "Bueno... creo que voy a apagar la Imprimidora tres mil.",
   fondo="sotano", reparto=[("byron", 420)], escala=0.7, impresora=(1250, 640), impresora_apagada=True, onomatopeya=("¡CLIC!", 1450, 260))
 l("tornillo", "¡Por fin dices algo sensato, muchacho!",
   fondo="ferreteria", reparto=duo("tornillo", 520, "byron", 1400), escala=0.65)
+l("billetin", "¡Y yo por fin dejé de encogerme! ¡Vuelvo a sentirme como un billete de verdad!",
+  fondo="pueblo", reparto=[("billetin", 600)], escala=0.75, billetin=(0.55, 1.0), todos_felices=True)
 l("byron", "Hasta Rayo está de acuerdo. Y eso que nunca dice nada.",
   fondo="pueblo", reparto=[("byron", 600), ("rayo", 1300)], escala=0.65, rayo_pulgar=True)
 l("byron", "Resumen: imprimir dinero no crea riqueza. Si hay más billetes, pero no más cosas, los precios suben. Y la inflación golpea más a quienes menos tienen.",
-  fondo="pueblo", reparto=TODOS, escala=0.5,
+  fondo="pueblo", reparto=TODOS, escala=0.44,
   tarjeta=dict(titulo="Lo que aprendimos", grande=True, x=960, y=40,
                filas=[("Más billetes ≠ riqueza", "✔"), ("Más dinero = precios ↑", "✔"), ("Golpea al que menos tiene", "✔")]))
 l("socrates", "Solo sé que no sé nada... pero ahora sé qué es la inflación.",
@@ -183,6 +195,6 @@ l("socrates", "Solo sé que no sé nada... pero ahora sé qué es la inflación.
 l("gertrudis", "Y yo ya saqué la plata del colchón. ¡Gracias, muchachos!",
   fondo="cuarto", reparto=[("gertrudis", 600)], escala=0.75)
 l("byron", "¿Qué tema de economía quieres que expliquemos la próxima vez? ¿Las criptomonedas? ¿Los impuestos? ¿Cómo funciona un banco? ¡Escríbelo en los comentarios!",
-  fondo="pueblo", reparto=TODOS + [("rayo", 1820)], escala=0.5, titulo=("¿PRÓXIMO TEMA?", "Escríbelo en los comentarios"))
+  fondo="pueblo", reparto=TODOS + [("rayo", 1860)], escala=0.42, titulo=("¿PRÓXIMO TEMA?", "Escríbelo en los comentarios"))
 l("byron", "¡Y suscríbete! Que en este canal, el conocimiento no tiene inflación.",
   fondo="plano", reparto=[("byron", 480)], escala=0.7, suscribete=True)

@@ -253,7 +253,74 @@ def don_tornillo():
     return ficha("#ECEFF1", "#90A4AE", "TORNILLO · JUBILADO", "DON TORNILLO", "En mis tiempos, los muebles duraban 40 años.", "".join(s))
 
 
-PERSONAJES = [("01_byron", byron), ("02_socrates", socrates), ("03_tinto", tinto), ("04_dona_gertrudis", gertrudis), ("05_don_tornillo", don_tornillo)]
+# ------------------------------------------------------------ 6. Billetín, el billete que se encoge
+def billetin(valor=1.0):
+    """valor=1 es un billete sano; con menos valor se encoge y pierde color."""
+    k = 0.55 + 0.45 * valor
+    verde = "#81C784" if valor > 0.8 else ("#A5D6A7" if valor > 0.6 else "#C8E6C9")
+    s = []
+    # piernas y brazos
+    base = 560 + 240 * k
+    s.append(palo(f"540,{base:.0f} 520,965") + palo(f"660,{base:.0f} 690,965"))
+    s.append(f'<ellipse cx="505" cy="970" rx="32" ry="14" fill="{INK}"/><ellipse cx="705" cy="970" rx="32" ry="14" fill="{INK}"/>')
+    s.append(f'<g transform="translate(600 560) scale({k:.3f}) translate(-600 -560)">')
+    s.append(palo("370,560 290,500 270,420") + mano(270, 420))
+    s.append(palo("830,560 910,620 950,560") + mano(950, 560))
+    # cuerpo de billete con leve curvatura
+    s.append(f'<path d="M360 330 C 480 300 720 360 840 330 L 840 800 C 720 830 480 770 360 800 Z" fill="{verde}" stroke="{INK}" stroke-width="10" stroke-linejoin="round"/>'
+             f'<path d="M390 365 C 500 340 700 390 810 365 L 810 765 C 700 790 500 740 390 765 Z" fill="none" stroke="#2E7D32" stroke-width="6"/>'
+             f'<text x="420" y="430" font-family="Arial Black, Arial" font-weight="900" font-size="54" fill="#1B5E20">$</text>'
+             f'<text x="780" y="760" text-anchor="end" font-family="Arial Black, Arial" font-weight="900" font-size="64" fill="#1B5E20">2.000</text>'
+             f'<path d="M700 380 q 30 30 0 60 q -30 30 0 60" stroke="#43A047" stroke-width="6" fill="none"/>')
+    # cara en el retrato
+    s.append(f'<ellipse cx="560" cy="560" rx="125" ry="130" fill="#E8F5E9" stroke="{INK}" stroke-width="8"/>'
+             f'<circle cx="520" cy="545" r="22" fill="#FFFFFF" stroke="{INK}" stroke-width="6"/><circle cx="600" cy="545" r="22" fill="#FFFFFF" stroke="{INK}" stroke-width="6"/>'
+             f'<circle cx="524" cy="550" r="10" fill="{INK}"/><circle cx="604" cy="550" r="10" fill="{INK}"/>'
+             f'<path d="M495 510 Q 520 495 545 512 M575 512 Q 600 495 625 510" fill="none" stroke="{INK}" stroke-width="7" stroke-linecap="round"/>')
+    if valor > 0.8:
+        s.append(f'<path d="M515 610 Q 560 645 605 610" fill="none" stroke="{INK}" stroke-width="8" stroke-linecap="round"/>')
+    else:
+        s.append(f'<path d="M515 625 Q 560 595 605 625" fill="none" stroke="{INK}" stroke-width="8" stroke-linecap="round"/>'
+                 '<path d="M500 575 q -6 22 0 34 q 6 -12 0 -34 Z" fill="#4FC3F7"/>')
+    s.append('</g>')
+    return ficha("#E8F5E9", "#43A047", "BILLETE · VÍCTIMA DE LA INFLACIÓN", "BILLETÍN", "¡Antes alcanzaba para una arepa entera!", "".join(s))
+
+
+# ------------------------------------------------------------ 7. Doctora Búho, economista del banco central
+def doctora_buho():
+    cafe, cafe_c = "#8D6E63", "#D7CCC8"
+    s = []
+    s.append(palo("545,880 535,965") + palo("655,880 665,965"))
+    s.append(f'<path d="M505 970 l 30 -12 l 30 12 M635 970 l 30 -12 l 30 12" stroke="#FFB300" stroke-width="12" fill="none" stroke-linecap="round"/>')
+    # cuerpo
+    s.append(f'<ellipse cx="600" cy="640" rx="230" ry="270" fill="{cafe}" stroke="{INK}" stroke-width="10"/>'
+             f'<ellipse cx="600" cy="690" rx="150" ry="190" fill="{cafe_c}"/>'
+             + "".join(f'<path d="M{x} {y} q 18 18 36 0" fill="none" stroke="#A1887F" stroke-width="6"/>' for x, y in ((540, 600), (600, 620), (560, 680), (620, 700), (550, 760), (610, 780))))
+    # alas: una sostiene un gráfico, otra señala
+    s.append(f'<path d="M380 560 C 300 600 280 720 340 800 C 380 760 400 680 400 600 Z" fill="#6D4C41" stroke="{INK}" stroke-width="8"/>')
+    s.append(f'<path d="M820 560 C 900 520 960 460 980 400 C 940 470 880 520 810 620 Z" fill="#6D4C41" stroke="{INK}" stroke-width="8"/>')
+    s.append(f'<g transform="translate(250 700) rotate(-8)"><rect x="-110" y="-90" width="220" height="170" rx="10" fill="#FFFFFF" stroke="{INK}" stroke-width="7"/>'
+             f'<polyline points="-80,50 -40,10 0,30 40,-30 80,-60" fill="none" stroke="#43A047" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>'
+             f'<line x1="-90" y1="65" x2="90" y2="65" stroke="{INK}" stroke-width="5"/></g>')
+    # cabeza con orejas de plumas
+    s.append(f'<path d="M420 300 L 450 180 L 520 260 Z M780 300 L 750 180 L 680 260 Z" fill="#6D4C41" stroke="{INK}" stroke-width="8" stroke-linejoin="round"/>'
+             f'<ellipse cx="600" cy="360" rx="210" ry="170" fill="{cafe}" stroke="{INK}" stroke-width="10"/>')
+    # ojos grandes con gafas
+    for cx in (520, 680):
+        s.append(f'<circle cx="{cx}" cy="350" r="70" fill="#FFF8E1" stroke="{INK}" stroke-width="7"/>'
+                 f'<circle cx="{cx + 5}" cy="355" r="30" fill="{INK}"/><circle cx="{cx + 15}" cy="342" r="10" fill="#FFFFFF"/>'
+                 f'<circle cx="{cx}" cy="350" r="82" fill="none" stroke="#FFB300" stroke-width="10"/>')
+    s.append(f'<line x1="600" y1="345" x2="600" y2="345" stroke="#FFB300" stroke-width="10"/><path d="M590 340 L 610 340" stroke="#FFB300" stroke-width="10"/>'
+             f'<path d="M580 420 L 620 420 L 600 465 Z" fill="#FFB300" stroke="{INK}" stroke-width="6" stroke-linejoin="round"/>')
+    # birrete y moño
+    s.append(f'<polygon points="430,215 600,160 770,215 600,270" fill="#263238" stroke="{INK}" stroke-width="7"/>'
+             f'<rect x="545" y="225" width="110" height="45" fill="#263238"/>'
+             f'<path d="M760 215 L 790 300" stroke="#FFC107" stroke-width="7"/><circle cx="792" cy="306" r="12" fill="#FFC107"/>'
+             f'<path d="M550 515 L 600 540 L 650 515 L 650 565 L 600 540 L 550 565 Z" fill="#C62828" stroke="{INK}" stroke-width="5" stroke-linejoin="round"/>')
+    return ficha("#FFF3E0", "#8D6E63", "BÚHO · ECONOMISTA", "DOCTORA BÚHO", "Primero los datos, después las opiniones.", "".join(s))
+
+
+PERSONAJES = [("01_byron", byron), ("02_socrates", socrates), ("03_tinto", tinto), ("04_dona_gertrudis", gertrudis), ("05_don_tornillo", don_tornillo), ("06_billetin", billetin), ("07_doctora_buho", doctora_buho)]
 
 
 def main():
