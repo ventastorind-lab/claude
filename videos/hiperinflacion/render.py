@@ -1,24 +1,23 @@
-"""Render del documental de hiperinflación: motion graphics sin personajes.
+"""Render del documental de hiperinflación (versión ilustrada con mapas reales).
 
-Diseño: fondo azul noche con retícula de puntos, acentos dorado/rojo/turquesa/verde,
-tipografía Inter, transición diagonal dorada, subtítulos karaoke y barra de progreso.
-
-Uso: python3 render.py <carpeta_tts> <salida.mp4> [fps] [--muestra]
+Uso: python3 render.py <carpeta_tts> <salida.mp4> [fps]
+     python3 render.py --muestra <carpeta_salida> [indices separados por coma]
 """
 import importlib.util
 import math
 import os
 import random
-import re
 import subprocess
 import sys
-from html import escape
 from multiprocessing import Pool
 
 import numpy as np
 import soundfile as sf
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, AQUI)
+import ilustraciones as I  # noqa: E402
+import mapas as M  # noqa: E402
 
 
 def _cargar(nombre, ruta):
@@ -28,502 +27,398 @@ def _cargar(nombre, ruta):
     return mod
 
 
-CA = _cargar("cola_animar", os.path.join(AQUI, "..", "cocacola", "animar.py"))
-GU = _cargar("hiper_guion", os.path.join(AQUI, "guion.py"))
-A = CA.A
-SR = CA.SR
+V1 = _cargar("hiper_v1", os.path.join(AQUI, "render_v1.py"))
+GU = _cargar("hiper_guion2", os.path.join(AQUI, "guion.py"))
+A, CA = V1.A, V1.CA
+SR = V1.SR
 W, H = 1920, 1080
-
-# ---------------------------------------------------------------- paleta
-FONDO1, FONDO2 = "#0B1220", "#111B30"
-PANEL = "#16223B"
-LINEA = "#2A3A5C"
-BLANCO = "#F5F7FA"
-GRIS = "#9AA7BF"
-ORO = "#F2B705"
-ROJO = "#E63946"
-TURQ = "#2EC4B6"
-VERDE = "#3DDC97"
-COLOR = {"rojo": ROJO, "dorado": ORO, "verde": VERDE, "turq": TURQ}
-FUENTE = "Inter, Liberation Sans, Arial"
-MONO = "DejaVu Sans Mono, Liberation Mono, monospace"
-
-VOZ_SID, VOZ_VEL, VOZ_TONO = 29, 1.02, 0.97
+txt, aparece, prog, ease_out, ease_io, ease_back, lerp, c01, f = V1.txt, V1.aparece, V1.prog, V1.ease_out, V1.ease_io, V1.ease_back, V1.lerp, V1.c01, V1.f
+ORO, ROJO, VERDE, TURQ, BLANCO, GRIS, FONDO1, PANEL = V1.ORO, V1.ROJO, V1.VERDE, V1.TURQ, V1.BLANCO, V1.GRIS, V1.FONDO1, V1.PANEL
+COLOR = V1.COLOR
+FUENTE = V1.FUENTE
+BANDERA_DE = {"DEU": "alemania", "HUN": "hungria", "BOL": "bolivia", "ARG": "argentina", "BRA": "brasil", "ZWE": "zimbabue", "VEN": "venezuela"}
+ANIO_DE = {"DEU": "1923", "HUN": "1946", "BOL": "1985", "ARG": "1989", "BRA": "1994", "ZWE": "2008", "VEN": "2017"}
+NOMBRE_DE = {"DEU": "Alemania", "HUN": "Hungría", "BOL": "Bolivia", "ARG": "Argentina", "BRA": "Brasil", "ZWE": "Zimbabue", "VEN": "Venezuela"}
+B = I.BILL
 
 
-def f(v):
-    return f"{v:.1f}"
+def bc(nombre):
+    return B.get(nombre, nombre)
 
 
-def c01(x):
-    return max(0.0, min(1.0, x))
-
-
-def prog(t, start, dur):
-    return c01((t - start) / dur) if dur > 0 else float(t >= start)
-
-
-def ease_out(x):
-    return 1 - (1 - x) ** 3
-
-
-def ease_io(x):
-    return 3 * x * x - 2 * x * x * x
-
-
-def ease_back(x, s=1.7):
-    x -= 1
-    return 1 + x * x * ((s + 1) * x + s)
-
-
-def lerp(a, b, p):
-    return a + (b - a) * p
-
-
-def txt(x, y, s, fs, color=BLANCO, peso=800, ancla="middle", fam=FUENTE, extra=""):
-    return (f'<text x="{f(x)}" y="{f(y)}" text-anchor="{ancla}" font-family="{fam}" font-weight="{peso}" '
-            f'font-size="{f(fs)}" fill="{color}" {extra}>{escape(s)}</text>')
-
-
-def aparece(svg, t, start, d=0.45, dy=40, cx=None, cy=None, escala=False):
-    """Entrada: sube y aparece (o crece con rebote si escala=True)."""
-    p = prog(t, start, d)
+# ---------------------------------------------------------------- piezas comunes
+def dato(d, t, start=0.6, pos="der"):
+    valor, etiqueta, nota, col = d
+    col = COLOR.get(col, ORO)
+    p = ease_out(prog(t, start, 0.55))
     if p <= 0:
         return ""
-    if escala:
-        k = ease_back(p)
-        return f'<g opacity="{f(min(1, p * 2.5))}" transform="translate({f(cx)} {f(cy)}) scale({k:.3f}) translate({f(-cx)} {f(-cy)})">{svg}</g>'
-    return f'<g opacity="{p:.3f}" transform="translate(0 {f(dy * (1 - ease_out(p)))})">{svg}</g>'
+    fs = min(96, 560 / max(1, len(valor) * 0.62))
+    w = 640
+    x = 1860 - w if pos == "der" else 60
+    dx = (1 - p) * (120 if pos == "der" else -120)
+    y = 120
+    hgt = 250 if nota else 200
+    s = (f'<g opacity="{f(p)}" transform="translate({f(dx)} 0)">'
+         f'<rect x="{x + 10}" y="{y + 12}" width="{w}" height="{hgt}" rx="18" fill="#000" opacity="0.30"/>'
+         f'<rect x="{x}" y="{y}" width="{w}" height="{hgt}" rx="18" fill="#0E1620" opacity="0.88"/>'
+         f'<rect x="{x}" y="{y}" width="12" height="{hgt}" rx="6" fill="{col}"/>'
+         + txt(x + 44, y + 30 + fs * 0.8, valor, fs, col, 900, "start")
+         + txt(x + 46, y + 70 + fs * 0.9, etiqueta, 36, BLANCO, 800, "start"))
+    if nota:
+        s += txt(x + 46, y + 118 + fs * 0.9, nota, min(26, 560 / max(1, len(nota) * 0.5)), GRIS, 600, "start")
+    return s + '</g>'
 
 
-def ancho_txt(s, fs, peso=800):
-    w = 0.0
-    for ch in s:
-        if ch.isupper():
-            w += 0.74
-        elif ch.isdigit():
-            w += 0.64
-        elif ch in " .,:;·'!¡|ijlíI()":
-            w += 0.30
-        else:
-            w += 0.58
-    return w * fs * (1.0 if peso >= 800 else 0.94)
-
-
-def fmt_num(v):
-    return f"{int(round(v)):,}".replace(",", ".")
-
-
-def fmt_corto(v):
-    if v >= 1e12:
-        return f"{v / 1e12:.1f}".replace(".", ",").replace(",0", "") + " billones"
-    if v >= 1e6:
-        return f"{v / 1e6:.0f} mill."
-    if v < 10 and v != int(v):
-        return f"{v:.1f}".replace(".", ",")
-    return fmt_num(v)
-
-
-# ---------------------------------------------------------------- iconos (líneas)
-def icono(nombre, cx, cy, color, k=1.0):
-    st = f'fill="none" stroke="{BLANCO}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"'
-    g = {
-        "guerra": f'<path d="M-36 8 a36 32 0 0 1 72 0 Z" {st}/><path d="M-46 8 h92" {st}/><path d="M-10 -14 h20" {st}/>',
-        "deuda": f'<rect x="-26" y="-36" width="52" height="72" rx="6" {st}/>' + txt(0, 14, "$", 40, BLANCO, 900) + f'<path d="M-14 26 h28" {st}/>',
-        "fabrica": f'<path d="M-40 34 V-2 l22 -14 v14 l22 -14 v14 l22 -14 V34 Z" {st}/><path d="M24 -16 V-38 h10 V-10" {st}/>',
-        "imprenta": f'<rect x="-38" y="-12" width="76" height="34" rx="6" {st}/><rect x="-22" y="-38" width="44" height="26" {st}/><rect x="-22" y="14" width="44" height="26" fill="{VERDE}" stroke="{BLANCO}" stroke-width="5"/>',
-        "candado": f'<rect x="-30" y="-6" width="60" height="44" rx="8" {st}/><path d="M-18 -6 v-12 a18 18 0 0 1 36 0 v12" {st}/><circle cx="0" cy="14" r="5" fill="{BLANCO}"/>',
-        "moneda": f'<circle r="36" {st}/><circle r="26" {st} stroke-dasharray="4 6"/>' + txt(0, 14, "$", 38, BLANCO, 900),
-        "balanza": f'<path d="M0 -36 V34 M-24 34 h48 M-38 -24 h76" {st}/><path d="M-38 -24 l-14 28 h28 Z M38 -24 l-14 28 h28 Z" {st}/>',
-        "banco": f'<path d="M-42 -12 L0 -38 L42 -12 Z M-42 34 h84 M-30 -6 v34 M-10 -6 v34 M10 -6 v34 M30 -6 v34" {st}/>',
-        "grafica_baja": f'<path d="M-38 -36 V34 H40" {st}/><path d="M-30 -24 L-8 -2 L6 -14 L32 18" {st}/><path d="M18 18 h14 v-14" {st}/>',
-        "tijera": f'<circle cx="-22" cy="22" r="12" {st}/><circle cx="22" cy="22" r="12" {st}/><path d="M-14 12 L28 -36 M14 12 L-28 -36" {st}/>',
-        "etiqueta": f'<path d="M-36 -10 L-10 -36 H34 V8 L8 34 Z" {st} transform="rotate(0)"/><circle cx="18" cy="-20" r="6" {st}/>',
-        "dolar": txt(0, 16, "US$", 40, BLANCO, 900),
-        "ancla": f'<circle cx="0" cy="-28" r="8" {st}/><path d="M0 -20 V34 M-18 -6 h36 M-34 10 a34 26 0 0 0 68 0" {st}/>',
-        "campo": f'<path d="M-40 32 H40 M0 32 V-8" {st}/><path d="M0 -4 C -6 -28 -30 -30 -34 -22 C -30 -4 -10 -2 0 -4 Z M0 -10 C 6 -34 30 -36 34 -28 C 30 -10 10 -8 0 -10 Z" {st}/>',
-        "petroleo": f'<path d="M0 -38 C 14 -16 30 0 30 14 a30 30 0 0 1 -60 0 C -30 0 -14 -16 0 -38 Z" {st}/>',
-        "confianza": f'<path d="M0 -38 L32 -26 V2 C32 22 16 32 0 40 C-16 32 -32 22 -32 2 V-26 Z" {st}/><path d="M2 -30 L-8 -6 L8 4 L-4 30" {st}/>',
-    }.get(nombre, f'<circle r="30" {st}/>')
-    return (f'<g transform="translate({f(cx)} {f(cy)}) scale({k:.3f})"><circle r="58" fill="{color}" opacity="0.18"/>'
-            f'<circle r="58" fill="none" stroke="{color}" stroke-width="5"/>{g}</g>')
-
-
-# ---------------------------------------------------------------- banderas
-def bandera(tipo, x, y, w, h):
-    franjas = {"alemania": ["#141414", "#DD0000", "#FFCE00"], "hungria": ["#CE2939", "#FFFFFF", "#477050"],
-               "bolivia": ["#D52B1E", "#F9E300", "#007934"], "argentina": ["#74ACDF", "#FFFFFF", "#74ACDF"],
-               "venezuela": ["#FCE300", "#0033A0", "#CF142B"],
-               "zimbabue": ["#006400", "#FFD200", "#D40000", "#141414", "#D40000", "#FFD200", "#006400"],
-               "brasil": ["#009C3B"]}[tipo]
-    hh = h / len(franjas)
-    s = "".join(f'<rect x="{f(x)}" y="{f(y + i * hh)}" width="{f(w)}" height="{f(hh + 0.6)}" fill="{c}"/>' for i, c in enumerate(franjas))
-    cx, cy = x + w / 2, y + h / 2
-    if tipo == "argentina":
-        s += f'<circle cx="{f(cx)}" cy="{f(cy)}" r="{f(h * 0.11)}" fill="#F6B40E"/>'
-    elif tipo == "brasil":
-        mx, my = w * 0.09, h * 0.12
-        s += (f'<polygon points="{f(x + mx)},{f(cy)} {f(cx)},{f(y + my)} {f(x + w - mx)},{f(cy)} {f(cx)},{f(y + h - my)}" fill="#FFDF00"/>'
-              f'<circle cx="{f(cx)}" cy="{f(cy)}" r="{f(h * 0.25)}" fill="#002776"/>'
-              f'<path d="M{f(cx - h * 0.25)} {f(cy - h * 0.03)} q {f(h * 0.25)} {f(-h * 0.08)} {f(h * 0.5)} {f(h * 0.06)}" stroke="#FFFFFF" stroke-width="{f(h * 0.04)}" fill="none"/>')
-    elif tipo == "zimbabue":
-        s += f'<polygon points="{f(x)},{f(y)} {f(x + h * 0.55)},{f(cy)} {f(x)},{f(y + h)}" fill="#FFFFFF"/>'
-        s += f'<circle cx="{f(x + h * 0.18)}" cy="{f(cy)}" r="{f(h * 0.08)}" fill="#D40000"/>'
-    elif tipo == "venezuela":
-        s += "".join(f'<circle cx="{f(cx + h * 0.28 * math.cos(math.pi * (0.12 + i * 0.108)))}" cy="{f(cy + h * 0.1 - h * 0.22 * math.sin(math.pi * (0.12 + i * 0.108)))}" r="{f(h * 0.028)}" fill="#FFFFFF"/>' for i in range(8))
-    return s + f'<rect x="{f(x)}" y="{f(y)}" width="{f(w)}" height="{f(h)}" fill="none" stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="3"/>'
-
-
-# ---------------------------------------------------------------- capa común
-DEFS = (f'<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{FONDO1}"/><stop offset="1" stop-color="{FONDO2}"/></linearGradient>'
-        '<radialGradient id="vin" cx="0.5" cy="0.5" r="0.75"><stop offset="0.55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="0.65"/></radialGradient>'
-        '<radialGradient id="glow"><stop offset="0" stop-color="#FFF" stop-opacity="1"/><stop offset="1" stop-color="#FFF" stop-opacity="0"/></radialGradient>'
-        f'<radialGradient id="gOro"><stop offset="0" stop-color="{ORO}" stop-opacity="0.35"/><stop offset="1" stop-color="{ORO}" stop-opacity="0"/></radialGradient>'
-        f'<radialGradient id="gRojo"><stop offset="0" stop-color="{ROJO}" stop-opacity="0.35"/><stop offset="1" stop-color="{ROJO}" stop-opacity="0"/></radialGradient>'
-        f'<radialGradient id="gVerde"><stop offset="0" stop-color="{VERDE}" stop-opacity="0.32"/><stop offset="1" stop-color="{VERDE}" stop-opacity="0"/></radialGradient>'
-        f'<radialGradient id="gTurq"><stop offset="0" stop-color="{TURQ}" stop-opacity="0.30"/><stop offset="1" stop-color="{TURQ}" stop-opacity="0"/></radialGradient>'
-        '<linearGradient id="areaR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E63946" stop-opacity="0.45"/><stop offset="1" stop-color="#E63946" stop-opacity="0"/></linearGradient>'
-        '<linearGradient id="areaV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3DDC97" stop-opacity="0.45"/><stop offset="1" stop-color="#3DDC97" stop-opacity="0"/></linearGradient>'
-        '</defs>')
-GLOW_DE = {ROJO: "gRojo", ORO: "gOro", VERDE: "gVerde", TURQ: "gTurq"}
-
-
-def fondo(tg, acento):
-    s = [DEFS, '<rect width="1920" height="1080" fill="url(#bg)"/>']
-    # resplandores que derivan lentamente
-    gid = GLOW_DE.get(acento, "gTurq")
-    x1, y1 = 1500 + 160 * math.sin(tg * 0.13), 260 + 90 * math.cos(tg * 0.11)
-    x2, y2 = 380 + 140 * math.cos(tg * 0.09), 820 + 80 * math.sin(tg * 0.12)
-    s.append(f'<circle cx="{f(x1)}" cy="{f(y1)}" r="720" fill="url(#{gid})"/>')
-    s.append(f'<circle cx="{f(x2)}" cy="{f(y2)}" r="620" fill="url(#gTurq)" opacity="0.6"/>')
-    # retícula de puntos que se desplaza
-    off = (tg * 12) % 60
-    pts = []
-    for gy in range(-1, 19):
-        for gx in range(-1, 33):
-            pts.append(f'M{f(gx * 60 + off)} {f(gy * 60 + off * 0.5)}h0.01')
-    s.append(f'<path d="{" ".join(pts)}" stroke="#FFFFFF" stroke-opacity="0.07" stroke-width="4" stroke-linecap="round"/>')
-    # líneas diagonales decorativas
-    s.append(f'<path d="M{f(-200 + (tg * 20) % 400)} 1080 L{f(400 + (tg * 20) % 400)} 0" stroke="{acento}" stroke-opacity="0.06" stroke-width="80"/>')
-    return "".join(s)
-
-
-def capa_superior(ctx, t):
-    s = ['<rect width="1920" height="1080" fill="url(#vin)"/>']
-    # barra de progreso global
-    s.append(f'<rect x="0" y="0" width="1920" height="6" fill="#FFFFFF" opacity="0.08"/>')
-    s.append(f'<rect x="0" y="0" width="{f(1920 * ctx["tg"] / ctx["total"])}" height="6" fill="{ORO}"/>')
-    # píldora de capítulo
-    lab = ctx["etiqueta"]
-    if lab:
-        w = ancho_txt(lab, 26, 700) + len(lab) * 2 + 66
-        s.append(f'<g transform="translate(60 44)"><rect width="{f(w)}" height="52" rx="26" fill="{PANEL}" stroke="{LINEA}" stroke-width="2" opacity="0.92"/>'
-                 f'<circle cx="28" cy="26" r="7" fill="{ctx["acento"]}"/>'
-                 + txt(46, 35, lab, 26, BLANCO, 700, "start", extra='letter-spacing="2"') + '</g>')
-    s.append(txt(1860, 78, "HIPERINFLACIÓN", 22, GRIS, 700, "end", extra='letter-spacing="6" opacity="0.7"'))
-    return "".join(s)
-
-
-def transicion(t, acento):
-    if t > 0.5:
-        return ""
-    p = ease_io(prog(t, 0, 0.5))
-    x = lerp(-700, 2300, p)
-    return (f'<polygon points="{f(x - 520)},0 {f(x + 40)},0 {f(x - 260)},1080 {f(x - 820)},1080" fill="{FONDO1}"/>'
-            f'<polygon points="{f(x)},0 {f(x + 140)},0 {f(x - 160)},1080 {f(x - 300)},1080" fill="{acento}"/>'
-            f'<polygon points="{f(x + 170)},0 {f(x + 200)},0 {f(x - 100)},1080 {f(x - 130)},1080" fill="{BLANCO}" opacity="0.7"/>')
-
-
-# ---------------------------------------------------------------- subtítulos karaoke
-def trozos(texto, max_linea=46):
-    palabras = texto.split()
-    lineas, act = [], []
-    for p in palabras:
-        if act and len(" ".join(act + [p])) > max_linea:
-            lineas.append(act)
-            act = []
-        act.append(p)
-        if p[-1] in ".?!" and len(" ".join(act)) > 18:
-            lineas.append(act)
-            act = []
-    if act:
-        lineas.append(act)
-    # agrupar de a 2 líneas, sin cruzar fin de frase en la segunda
-    grupos, i = [], 0
-    while i < len(lineas):
-        g = [lineas[i]]
-        if i + 1 < len(lineas) and lineas[i][-1][-1] not in ".?!":
-            g.append(lineas[i + 1])
-            i += 1
-        grupos.append(g)
-        i += 1
-    return grupos
-
-
-def subtitulos(texto, t, vdur):
-    grupos = trozos(texto)
-    palabras = [p for g in grupos for ln in g for p in ln]
-    pesos = []
-    for p in palabras:
-        w = len(p) + 1
-        if p.endswith((",", ";", ":")):
-            w += 5
-        if p.endswith((".", "?", "!")):
-            w += 9
-        pesos.append(w)
-    tot = sum(pesos)
-    habla = max(0.5, vdur - 0.42)
-    pos = c01((t - 0.12) / habla) * tot
-    acum, actual = 0, len(palabras) - 1
-    for i, w in enumerate(pesos):
-        if acum + w > pos:
-            actual = i
-            break
-        acum += w
-    # grupo que contiene la palabra actual
-    idx = 0
-    for g in grupos:
-        n = sum(len(ln) for ln in g)
-        if actual < idx + n:
-            break
-        idx += n
-    fs, alto = 44, 60
-    y0 = 1000 - (len(g) - 1) * alto
-    ancho = max(ancho_txt(" ".join(ln), fs, 600) for ln in g) + 70
-    s = [f'<rect x="{f(960 - ancho / 2)}" y="{f(y0 - 50)}" width="{f(ancho)}" height="{f(len(g) * alto + 28)}" rx="18" fill="#060B16" opacity="0.72"/>']
-    j = idx
-    for li, ln in enumerate(g):
-        partes = []
-        for p in ln:
-            if j == actual:
-                col = ORO
-            elif j < actual:
-                col = BLANCO
-            else:
-                col = "#8592AB"
-            partes.append(f'<tspan fill="{col}">{escape(p)}</tspan>')
-            j += 1
-        s.append(f'<text x="960" y="{f(y0 + li * alto)}" text-anchor="middle" font-family="{FUENTE}" font-weight="600" font-size="{fs}">{" ".join(partes)}</text>')
-    return "".join(s)
-
-
-# ---------------------------------------------------------------- plantillas
-def titulo_seccion(titulo, t, color):
-    fs = min(60, 60 * 1500 / max(1, ancho_txt(titulo, 60)))
-    w = ancho_txt(titulo, fs) + 20
-    return aparece(f'<rect x="160" y="190" width="10" height="70" fill="{color}"/>' + txt(196, 248, titulo, fs, BLANCO, 900, "start")
-                   + f'<rect x="196" y="272" width="{f(w * ease_out(prog(t, 0.2, 0.6)))}" height="4" fill="{color}" opacity="0.6"/>', t, 0.05, 0.4, 20)
-
-
-def precio_ticker(v, t, dur):
-    dias = v.get("dias", 7)
-    de = v.get("de", 1000)
-    tt = c01((t - 0.6) / max(1, dur - 1.6))
-    dia_f = 1 + tt * (dias - 1)
-    dia = int(dia_f)
-    precio = de * 2 ** (dia - 1)
-    s = [titulo_seccion("Precio del pan", t, ROJO)]
-    # tarjeta de precio
-    card = (f'<rect x="160" y="330" width="760" height="460" rx="34" fill="{PANEL}" stroke="{LINEA}" stroke-width="3"/>'
-            + txt(220, 410, v.get("producto", "PAN"), 40, GRIS, 800, "start", extra='letter-spacing="8"')
-            + txt(220, 470, f"DÍA {dia}", 48, ORO, 900, "start")
-            + txt(540, 640, "$ " + fmt_num(precio), 120 if precio < 1e5 else 104, BLANCO, 900)
-            + txt(540, 730, "× 2 cada día", 40, ROJO, 800))
-    # pan dibujado
-    pan = (f'<g transform="translate(820 420)"><ellipse rx="70" ry="44" fill="#D9A15B"/><ellipse rx="70" ry="44" fill="none" stroke="#7A4A1E" stroke-width="5"/>'
-           '<path d="M-36 -20 q 10 18 0 36 M0 -26 q 10 22 0 50 M36 -20 q 10 18 0 36" stroke="#7A4A1E" stroke-width="5" fill="none"/></g>')
-    s.append(aparece(card + pan, t, 0.15, 0.5, 60))
-    # barras exponenciales
-    bx, by, bw = 1040, 790, 90
-    mx = de * 2 ** (dias - 1)
-    s.append(aparece(f'<path d="M{bx - 20} {by} H{bx + dias * (bw + 22)}" stroke="{LINEA}" stroke-width="4"/>', t, 0.3))
-    for d in range(1, dias + 1):
-        p = c01(dia_f - d + 1)
-        if p <= 0:
-            continue
-        val = de * 2 ** (d - 1)
-        hgt = 520 * val / mx * ease_out(p)
-        x = bx + (d - 1) * (bw + 22)
-        col = ROJO if d == dia else "#7A2A35"
-        s.append(f'<rect x="{x}" y="{f(by - max(hgt, 4))}" width="{bw}" height="{f(max(hgt, 4))}" rx="8" fill="{col}"/>')
-        s.append(txt(x + bw / 2, by + 44, f"D{d}", 30, GRIS, 700))
-        if d == dia:
-            s.append(txt(x + bw / 2, by - hgt - 20, fmt_corto(val), 30, BLANCO, 800))
-    return "".join(s)
-
-
-def _partir_numero(valor):
-    m = re.match(r"^([×]?)([\d.]+)(\s.*)?$", valor)
-    if not m:
-        return None
-    return m.group(1), int(m.group(2).replace(".", "")), (m.group(3) or "")
-
-
-def numero(v, t, dur):
-    col = COLOR.get(v.get("color", "dorado"), ORO)
-    valor = v["valor"]
-    partes = _partir_numero(valor) if v.get("contar", True) else None
-    pc = ease_out(prog(t, 0.3, min(1.8, dur * 0.4)))
-    if partes:
-        pre, n, suf = partes
-        mostrado = pre + fmt_num(n * pc) + suf
-    else:
-        mostrado = valor
-    fs = min(250, 1650 / max(1, len(valor) * 0.62))
-    s = [f'<circle cx="960" cy="470" r="{f(420 + 20 * math.sin(t * 2))}" fill="url(#{GLOW_DE.get(col, "gOro")})"/>']
-    # anillos
-    for i, r in enumerate((330, 380)):
-        a = 360 * ease_out(prog(t, 0.1 + i * 0.15, 1.2))
-        if a > 1:
-            x2 = 960 + r * math.sin(math.radians(a))
-            y2 = 470 - r * math.cos(math.radians(a))
-            s.append(f'<path d="M960 {470 - r} A{r} {r} 0 {1 if a > 180 else 0} 1 {f(x2)} {f(y2)}" fill="none" stroke="{col}" stroke-opacity="{0.35 - i * 0.15:.2f}" stroke-width="{4 - i}"/>')
-    num_svg = txt(960, 470 + fs * 0.36, mostrado, fs, col, 900)
-    if partes:
-        s.append(aparece(num_svg, t, 0.2, 0.3, 30))
-    else:
-        s.append(aparece(num_svg, t, 0.25, 0.55, cx=960, cy=470, escala=True))
-    s.append(aparece(txt(960, 650, v.get("etiqueta", ""), 58, BLANCO, 800), t, 0.6, 0.45))
-    if v.get("nota"):
-        nota = v["nota"]
-        w = ancho_txt(nota, 34, 600) + 70
-        s.append(aparece(f'<rect x="{f(960 - w / 2)}" y="700" width="{f(w)}" height="64" rx="32" fill="{PANEL}" stroke="{col}" stroke-width="2"/>'
-                         + txt(960, 744, nota, 34, GRIS, 600), t, 1.0, 0.45))
-    return "".join(s)
-
-
-def capitulo(v, t, dur, acento):
-    s = []
-    n = f'{v["num"]:02d}'
-    p = ease_out(prog(t, 0.1, 0.8))
-    s.append(f'<g opacity="{p:.3f}" transform="translate({f(lerp(-200, 0, p))} 0)">'
-             + txt(520, 760, n, 560, "none", 900, extra=f'stroke="{acento}" stroke-width="6" stroke-opacity="0.9"') + '</g>')
-    s.append(aparece(txt(980, 380, f"CAPÍTULO {v['num']}", 40, acento, 800, "start", extra='letter-spacing="10"'), t, 0.35, 0.4))
-    s.append(aparece(txt(970, 530, v["pais"], 150 if len(v["pais"]) < 9 else 128, BLANCO, 900, "start"), t, 0.5, 0.5, 50))
-    s.append(aparece(txt(980, 640, v["anio"], 90, ROJO if v["num"] != 7 else ORO, 800, "start"), t, 0.75, 0.45))
-    # bandera con barrido
-    pb = ease_out(prog(t, 0.9, 0.7))
-    if pb > 0:
-        s.append(f'<clipPath id="cb"><rect x="1300" y="580" width="{f(330 * pb)}" height="220"/></clipPath>'
-                 f'<g clip-path="url(#cb)">{bandera(v["bandera"], 1300, 580, 330, 220)}</g>')
-    # línea que corre
-    s.append(f'<rect x="980" y="680" width="{f(260 * ease_out(prog(t, 1.0, 0.6)))}" height="6" fill="{acento}"/>')
-    return "".join(s)
-
-
-def lista(v, t, dur):
-    causa = v.get("modo") == "causa"
-    col = ROJO if causa else VERDE
-    items = v["items"]
-    ya = v.get("ya", 0)
-    nuevos = len(items) - ya
-    s = [titulo_seccion(v["titulo"], 0.6 if ya else t, col)]
-    chip = "CAUSAS" if causa else "SALIDA"
-    s.append(f'<g transform="translate(1600 200)"><rect width="180" height="56" rx="28" fill="{col}" opacity="0.2"/><rect width="180" height="56" rx="28" fill="none" stroke="{col}" stroke-width="3"/>'
-             + txt(90, 38, chip, 28, col, 900, extra='letter-spacing="4"') + '</g>')
-    paso = min(1.6, (dur * 0.75 - 0.4) / max(1, nuevos))
-    alto = 140 if len(items) <= 3 else 124
-    y0 = 330
-    for j, (ic, texto) in enumerate(items):
-        y = y0 + j * (alto + 16)
-        if j < ya:
-            st, viejo = -1.0, True
-        else:
-            st, viejo = 0.4 + (j - ya) * paso, False
-        fila = (f'<rect x="160" y="{y}" width="1600" height="{alto}" rx="24" fill="{PANEL}" stroke="{LINEA}" stroke-width="2"/>'
-                f'<rect x="160" y="{y}" width="10" height="{alto}" rx="5" fill="{col}"/>'
-                + icono(ic, 270, y + alto / 2, col, 0.95 if alto == 140 else 0.85)
-                + txt(370, y + alto / 2 + 20, texto, 56, BLANCO, 800, "start"))
-        if not viejo and j == len(items) - 1 and nuevos >= 1:
-            # brillo en la fila más reciente
-            fila += f'<rect x="160" y="{y}" width="1600" height="{alto}" rx="24" fill="none" stroke="{col}" stroke-width="3" opacity="{0.4 + 0.3 * math.sin(t * 4):.2f}"/>'
-        s.append(fila if viejo else _entra_lado(fila, t, st))
-    return "".join(s)
-
-
-def _entra_lado(svg, t, st):
-    p = prog(t, st, 0.45)
+def rotulo(texto, x, y, t, start=0.3, fs=40, col=BLANCO, fondo="#0E1620", ancla="middle"):
+    p = ease_out(prog(t, start, 0.4))
     if p <= 0:
         return ""
-    return f'<g opacity="{f(min(1, p * 2))}" transform="translate({f(-120 * (1 - ease_out(p)))} 0)">{svg}</g>'
+    return f'<g opacity="{f(p)}" transform="translate(0 {f(20 * (1 - p))})">' + I.caja_texto(x, y, texto, fs, fondo, col, 0.85, ancla) + '</g>'
 
 
-def grafica(v, t, dur):
-    col = COLOR.get(v.get("color", "rojo"), ROJO)
-    vals, etq = v["valores"], v["etiquetas"]
-    lg = v.get("log", False)
-    x0, x1, y0, y1 = 300, 1600, 820, 420
-    s = [titulo_seccion(v["titulo"], t, col)]
-    s.append(f'<rect x="200" y="300" width="1540" height="580" rx="28" fill="{PANEL}" opacity="0.65"/>')
-    for k in range(5):
-        y = y0 - (y0 - y1) * k / 4
-        s.append(f'<path d="M{x0} {f(y)} H{x1}" stroke="{LINEA}" stroke-width="2" stroke-dasharray="6 10"/>')
-    tr = (lambda z: math.log10(z)) if lg else (lambda z: z)
-    lo = min(0, min(tr(z) for z in vals)) if not lg else min(tr(z) for z in vals)
-    hi = max(tr(z) for z in vals)
-    pts = []
-    n = len(vals)
-    for i, z in enumerate(vals):
-        x = x0 + (x1 - x0) * (i / (n - 1) if n > 1 else 0.5)
-        y = y0 - (y0 - y1) * (tr(z) - lo) / ((hi - lo) or 1)
-        pts.append((x, y))
-    pd = ease_io(prog(t, 0.5, max(1.2, dur * 0.55)))
-    seg = pd * (n - 1)
-    k = int(seg)
-    vis = pts[:k + 1]
-    if k < n - 1:
-        fr = seg - k
-        vis.append((lerp(pts[k][0], pts[k + 1][0], fr), lerp(pts[k][1], pts[k + 1][1], fr)))
-    for i, (x, _) in enumerate(pts):
-        s.append(txt(x, 860, etq[i], 30, GRIS, 700))
-    if len(vis) >= 2:
-        d = " ".join(f"{'M' if i == 0 else 'L'}{f(x)} {f(y)}" for i, (x, y) in enumerate(vis))
-        area = d + f" L{f(vis[-1][0])} {y0} L{f(vis[0][0])} {y0} Z"
-        s.append(f'<path d="{area}" fill="url(#{"areaV" if col == VERDE else "areaR"})"/>')
-        s.append(f'<path d="{d}" fill="none" stroke="{col}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>')
-    for i, (x, y) in enumerate(pts):
-        if seg + 1e-6 >= i:
-            pp = c01((seg - i) * 3 + 0.34) if i else 1
-            s.append(f'<circle cx="{f(x)}" cy="{f(y)}" r="{f(13 * ease_back(pp))}" fill="{FONDO1}" stroke="{col}" stroke-width="6"/>')
-            lab = fmt_corto(vals[i]) + (" " + v["unidad"] if v.get("unidad") and i < n - 1 else "")
-            if i < n - 1:
-                s.append(f'<g opacity="{pp:.2f}">' + txt(x, y - 30, lab, 32, BLANCO, 800) + '</g>')
-    if pd >= 1 and v.get("final"):
-        x, y = pts[-1]
-        fin = v["final"]
-        w = ancho_txt(fin, 46) + 50
-        bx, by = x - w - 40, y - 38
-        s.append(aparece(f'<rect x="{f(bx)}" y="{f(by)}" width="{f(w)}" height="76" rx="18" fill="{col}"/>'
-                         + txt(bx + w / 2, by + 53, fin, 46, FONDO1, 900), t, 0.5 + max(1.2, dur * 0.55), 0.4, cx=bx + w, cy=y, escala=True))
-    if lg and "log" not in v["titulo"]:
-        s.append(txt(1720, 290, "escala logarítmica", 24, GRIS, 600, "end", extra='font-style="italic"'))
+def mesa(color="#6B4A2E"):
+    s = [f'<rect width="1920" height="1080" fill="{color}"/>']
+    r = random.Random(4)
+    for i in range(40):
+        y = r.uniform(0, 1080)
+        s.append(f'<path d="M0 {f(y)} Q 960 {f(y + r.uniform(-30, 30))} 1920 {f(y + r.uniform(-20, 20))}" stroke="#000" stroke-opacity="{r.uniform(0.04, 0.12):.2f}" stroke-width="{r.uniform(2, 6):.1f}" fill="none"/>')
+    s.append('<radialGradient id="lampara" cx="0.5" cy="0.4" r="0.6"><stop offset="0" stop-color="#FFE9B0" stop-opacity="0.35"/><stop offset="1" stop-color="#000" stop-opacity="0.45"/></radialGradient>'
+             '<rect width="1920" height="1080" fill="url(#lampara)"/>')
     return "".join(s)
 
 
-def barras(v, t, dur):
-    items = v["items"]
-    s = [titulo_seccion(v["titulo"], t, ROJO)]
-    mx = max(math.log10(z) for _, z, _ in items)
-    for i, (lab, z, vt) in enumerate(items):
+def pared(color, zocalo="#3A2E26", y=760):
+    return (f'<rect width="1920" height="1080" fill="{color}"/><rect y="{y}" width="1920" height="{1080 - y}" fill="{zocalo}"/>'
+            f'<rect y="{y}" width="1920" height="14" fill="#000" opacity="0.2"/>')
+
+
+def vista(iso, relleno=0.55, dx=0.0):
+    if iso == "mundo":
+        return GU.MUNDO
+    return M.vista_pais(iso, relleno, dx)
+
+
+# ---------------------------------------------------------------- escenas: mapas
+def esc_capitulo(v, t, dur, ctx):
+    a = vista(v.get("desde", "mundo"), 0.5)
+    b = vista(v["iso"], 0.5, -0.12)
+    dv = min(2.6, dur * 0.65)
+    p = ease_io(prog(t, 0.1, dv))
+    cam = M.Camara(*M.interp_vista(a, b, p))
+    cam.z *= 1 + 0.04 * prog(t, dv, dur)
+    res = (v["iso"],) if p > 0.55 else ()
+    s = [M.mapa(cam, t, resaltar=res)]
+    for lon, lat, nom in v.get("pins", []):
+        s.append(M.pin(cam, lon, lat, nom, t, dv + 0.2))
+    # rótulo inferior
+    q = ease_out(prog(t, dv * 0.55, 0.6))
+    if q > 0:
+        x0 = 60 - (1 - q) * 300
+        s.append(f'<g opacity="{f(q)}"><rect x="{f(x0)}" y="600" width="700" height="250" rx="20" fill="#0E1620" opacity="0.9"/>'
+                 f'<rect x="{f(x0)}" y="600" width="12" height="250" rx="6" fill="{ORO}"/>'
+                 + V1.bandera(BANDERA_DE[v["iso"]], x0 + 50, 650, 180, 120)
+                 + txt(x0 + 260, 680, f'CAPÍTULO {v["num"]}', 30, ORO, 800, "start", extra='letter-spacing="8"')
+                 + txt(x0 + 258, 760, v["pais"], 74 if len(v["pais"]) < 9 else 64, BLANCO, 900, "start")
+                 + txt(x0 + 260, 820, v["anio"], 44, ROJO, 800, "start")
+                 + txt(x0 + 50, 830, "Fronteras actuales", 20, GRIS, 600, "start") + '</g>')
+    return "".join(s)
+
+
+def esc_mapa(v, t, dur, ctx):
+    a = vista(v["iso"], v.get("relleno", 0.55), v.get("dx", 0))
+    cam = M.Camara(a[0], a[1], a[2] * (1 + 0.05 * t / dur))
+    s = [M.mapa(cam, t, resaltar=tuple(v.get("resaltar", ())), colores=v.get("colores"))]
+    if v.get("region"):
+        lon, lat, km, nom = v["region"]
+        s.append(M.region(cam, lon, lat, km, nom, t, 0.5))
+    for i, (a_, b_, nom) in enumerate(v.get("flechas", [])):
+        s.append(M.flecha(cam, a_, b_, t, 1.0 + i * 0.6, 0.9, "#3D6FB6", 12, 0.22, nom))
+    if v.get("billete_real"):
+        p = ease_out(prog(t, 1.2, 0.7))
+        if p > 0:
+            s.append(f'<g opacity="{f(p)}">' + I.billete(1380, 720 + 40 * (1 - p), 620, "1", "REAL", bc("real"), rot=-6 + 2 * math.sin(t)) + '</g>')
+    return "".join(s)
+
+
+def esc_mapa_hiper(v, t, dur, ctx):
+    cam = M.Camara(GU.MUNDO[0], GU.MUNDO[1], GU.MUNDO[2] * (1 + 0.04 * t / dur))
+    lista = GU.HIPER
+    paso = (dur * 0.7) / len(lista)
+    n = int(c01((t - 0.3) / (dur * 0.7)) * len(lista))
+    colores = {iso: ("#E4572E" if i < n else None) for i, iso in enumerate(lista)}
+    colores = {k: c for k, c in colores.items() if c}
+    s = [M.mapa(cam, t, colores=colores, etiquetas=False)]
+    return "".join(s)
+
+
+def esc_mapa_siete(v, t, dur, ctx):
+    concl = v.get("conclusion")
+    cam = M.Camara(-10, 10, 5.8 * (1 + 0.04 * t / dur))
+    paso = 0.15 if concl else min(0.6, dur * 0.7 / 7)
+    colores = {}
+    s_pins = []
+    pts = []
+    for i, iso in enumerate(GU.SIETE):
+        st = 0.3 + i * paso
+        if t > st:
+            colores[iso] = "#E4572E"
+        p = M.D["paises"][iso]
+        lado = 1 if iso in ("DEU", "HUN", "ZWE", "BRA") else -1
+        s_pins.append(M.pin(cam, p["lx"], p["ly"], f"{NOMBRE_DE[iso]} {ANIO_DE[iso]}", t, st, "#FFFFFF", lado, 28))
+        pts.append(cam.p(p["lx"], p["ly"]))
+    s = [M.mapa(cam, t, colores=colores, etiquetas=False)]
+    if concl:
+        q = c01((t - 1.5) / max(1, dur - 2.5))
+        n = q * (len(pts) - 1)
+        k = int(n)
+        vis = pts[:k + 1]
+        if k < len(pts) - 1:
+            fr = n - k
+            vis.append((lerp(pts[k][0], pts[k + 1][0], fr), lerp(pts[k][1], pts[k + 1][1], fr)))
+        if len(vis) > 1:
+            s.append('<path d="M' + " L".join(f"{f(x)} {f(y)}" for x, y in vis) + f'" stroke="{ORO}" stroke-width="5" stroke-dasharray="14 10" fill="none"/>')
+    s += s_pins
+    return "".join(s)
+
+
+def esc_migracion(v, t, dur, ctx):
+    cam = M.Camara(-66, -12, 13.5 * (1 + 0.04 * t / dur))
+    s = [M.mapa(cam, t, resaltar=("VEN",), colores={"COL": "#E8B04A", "PER": "#E8B04A", "BRA": "#E8B04A", "ECU": "#E8B04A", "CHL": "#E8B04A", "ARG": "#E8B04A"})]
+    origen = (-66.9, 8.0)
+    destinos = [((-74.07, 4.71), "Colombia"), ((-77.04, -12.05), "Perú"), ((-60.67, 2.82), "Brasil"), ((-78.47, -0.18), "Ecuador"),
+                ((-70.66, -33.45), "Chile"), ((-58.4, -34.6), "Argentina")]
+    for i, (dst, nom) in enumerate(destinos):
+        s.append(M.flecha(cam, origen, dst, t, 0.6 + i * 0.45, 0.9, ORO, 9, 0.18 if i % 2 else -0.18))
+        if t > 1.5 + i * 0.45:
+            x, y = cam.p(*dst)
+            s.append(f'<text x="{f(x)}" y="{f(y + 44)}" text-anchor="middle" font-family="{FUENTE}" font-weight="800" font-size="30" fill="#FFFFFF" stroke="#101820" stroke-width="6" paint-order="stroke">{nom}</text>')
+    s.append(f'<g transform="translate(60 640)"><rect width="560" height="300" rx="18" fill="#0E1620" opacity="0.85"/>'
+             + txt(30, 52, "1 figura ≈ 250.000 personas", 28, GRIS, 700, "start")
+             + I.pictograma(50, 90, 10, 3, t, 1.0, 0.07, ORO, "#3A4552", 28, 48) + '</g>')
+    return "".join(s)
+
+
+def fondo_mapa_oscuro(iso, t, dur):
+    if iso == "mundo":
+        a = GU.MUNDO
+    else:
+        a = M.vista_pais(iso, 0.7)
+    cam = M.Camara(a[0], a[1], a[2] * (1 + 0.03 * t / max(dur, 1)))
+    return M.mapa(cam, t, resaltar=(() if iso == "mundo" else (iso,)), tinte=("#081018", 0.62), etiquetas=False)
+
+
+def esc_grafica(v, t, dur, ctx):
+    return fondo_mapa_oscuro(v["iso"], t, dur) + V1.grafica(v, t, dur)
+
+
+def esc_barras(v, t, dur, ctx):
+    items = [(lab, val, tx) for _, lab, val, tx in v["items"]]
+    s = [fondo_mapa_oscuro("mundo", t, dur), V1.barras(dict(v, items=items), t, dur)]
+    for i, (iso, *_r) in enumerate(v["items"]):
         y = 340 + i * 135
         st = 0.5 + i * min(1.3, dur * 0.6 / len(items))
-        p = ease_out(prog(t, st, 0.9))
-        w = 1000 * math.log10(z) / mx * p
-        fila = (txt(160, y + 58, lab, 40, BLANCO, 800, "start")
-                + f'<rect x="620" y="{y + 10}" width="1000" height="74" rx="14" fill="{PANEL}"/>'
-                + f'<rect x="620" y="{y + 10}" width="{f(max(w, 0.1))}" height="74" rx="14" fill="{ROJO if i == 0 else "#B23A48"}"/>'
-                + f'<g opacity="{c01(p * 2 - 1):.2f}">' + txt(620 + w + (20 if w < 640 else -20), y + 60, vt, 36, BLANCO if w < 640 else FONDO1, 900, "start" if w < 640 else "end") + '</g>')
-        s.append(_entra_lado(fila, t, st - 0.2))
+        s.append(aparece(V1.bandera(BANDERA_DE[iso], 60, y + 20, 72, 48), t, st - 0.2, 0.4, 0))
     return "".join(s)
 
 
-def ceros(v, t, dur):
+# ---------------------------------------------------------------- escenas: calle y comercio
+def esc_panaderia(v, t, dur, ctx):
+    era = v.get("era", "2010")
+    dias = v.get("dias", 7)
+    tt = c01((t - 0.6) / max(1, dur - 1.4))
+    dia = 1 + int(tt * (dias - 1) + 1e-6)
+    precio = v.get("de", 1000) * 2 ** (dia - 1)
+    s = [I.calle(era, t), I.tienda(1020, 820, 800, 560, "PANADERÍA", "#B5651D", ("#B3261E", "#F4ECD8"), era,
+                                    interior=I.pan(1170, 700, 0.9) + I.pan(1330, 700, 0.8))]
+    s.append(I.multitud(40, 980, 965, 16, 7, t, era, filas=3, h=300, mira=1))
+    # pizarra con precio
+    sh = 4 * math.sin(t * 8) if (t - 0.6) % ((dur - 1.4) / max(1, dias - 1)) < 0.25 and t > 0.6 else 0
+    s.append(f'<g transform="translate(1560 1010) rotate({f(sh)} 0 -200)"><path d="M-170 0 L -120 -420 M 170 0 L 120 -420" stroke="#5A4630" stroke-width="16"/>'
+             '<rect x="-160" y="-430" width="320" height="300" rx="10" fill="#2B3A33" stroke="#6B4A2E" stroke-width="14"/>'
+             + txt(0, -370, "PAN", 46, "#F4ECD8", 800, extra='letter-spacing="8"')
+             + txt(0, -265, "$ " + V1.fmt_num(precio), 64 if precio < 100000 else 52, "#F2B705", 900)
+             + txt(0, -175, f"DÍA {dia}", 40, "#F4ECD8", 700) + '</g>')
+    # flecha de duplicación
+    if dia > 1:
+        s.append(rotulo("× 2 cada día", 1560, 520, t, 0.9, 40, ROJO))
+    return "".join(s)
+
+
+def esc_mercado(v, t, dur, ctx):
+    era = v.get("era", "2010")
+    sube = v.get("sube", 1.5)
+    q = ease_io(c01((t - 0.8) / max(1, dur - 2)))
+    fac = 1 + (sube - 1) * q
+    if v.get("andino"):
+        s = [I.calle(era, t, base=780, densidad=1.1)]
+        cols = ["#E63946", "#2A9D8F", "#F4A261", "#457B9D"]
+        prods = ["papas", "frutas", "verduras", "frutas"]
+        for i in range(4):
+            s.append(I.puesto_mercado(120 + i * 460, 840, 340, cols[i], i, prods[i]))
+        s.append(I.multitud(0, 1920, 1000, 14, 12, t, era, filas=2, h=270, poses=["pie", "camina"]))
+        precios = [2000, 3500, 1200, 5000]
+        for i, pr in enumerate(precios):
+            s.append(I.etiqueta_precio(170 + i * 460, 470 - 6 * math.sin(t * 2 + i), "$b " + V1.fmt_num(pr * fac), 0.9))
+    else:
+        s = [pared("#E9E4D8", "#BFB8AA", 900), '<rect y="0" width="1920" height="70" fill="#CFC9BC"/>']
+        for x in range(120, 1920, 420):
+            s.append(f'<rect x="{x}" y="70" width="220" height="16" fill="#FFFFFF"/><rect x="{x}" y="86" width="220" height="40" fill="#FFF9E0" opacity="0.4"/>')
+        p_base = [["$ 2.500", "$ 4.900", "$ 1.200"], ["$ 8.300", "$ 3.100", "$ 6.700"], ["$ 950", "$ 12.400", "$ 5.200"]]
+        p_now = [[f"$ {V1.fmt_num(int(x.split()[1].replace('.', '')) * fac)}" for x in fila] for fila in p_base]
+        s.append(I.estante(80, 860, 820, 4, 3, 0.0, p_now))
+        s.append(I.estante(1020, 860, 820, 4, 4, 0.0, p_now[::-1]))
+        s.append(I.multitud(100, 1800, 1060, 6, 21, t, era, filas=1, h=380, poses=["pie", "camina"]))
+        s.append(I.etiqueta_precio(700, 300 - 8 * math.sin(t * 2), "+" + str(int(round((fac - 1) * 100))) + " %", 1.3, "#FFF6D6", -8))
+    return "".join(s)
+
+
+def esc_pan_vs_billetes(v, t, dur, ctx):
+    meses = v.get("meses", 12)
+    q = c01((t - 0.5) / max(1, dur - 1.3))
+    mes = max(1, int(q * meses + 0.999))
+    fac = 1.5 ** (q * meses)
+    s = [mesa("#7A5636")]
+    s.append('<ellipse cx="480" cy="760" rx="260" ry="60" fill="#E8E2D4"/><ellipse cx="480" cy="750" rx="230" ry="48" fill="#F5F0E4"/>')
+    s.append(I.pan(480, 740, 1.8))
+    s.append(I.pila(1050, 900, 5, 3, 9, bc("dolar"), 120, visibles=min(135, fac * 135 / 130)))
+    # calendario
+    s.append(f'<g transform="translate(1600 250)"><rect x="-120" y="-110" width="240" height="230" rx="14" fill="#FFFFFF"/><rect x="-120" y="-110" width="240" height="60" rx="14" fill="{ROJO}"/>'
+             + txt(0, -66, "MES", 34, "#FFFFFF", 800) + txt(0, 60, str(mes), 110, "#2B2B2B", 900) + '</g>')
+    s.append(f'<g transform="translate(480 330)"><rect x="-260" y="-80" width="520" height="140" rx="20" fill="#0E1620" opacity="0.88"/>'
+             + txt(0, 30, "× " + V1.fmt_num(fac), 96, ORO, 900) + '</g>')
+    s.append(rotulo("El precio del mismo pan", 480, 200, t, 0.4, 34))
+    return "".join(s)
+
+
+def esc_carretilla(v, t, dur, ctx):
+    era = v.get("era", "1920")
+    s = [I.calle(era, t, seed=8), I.tienda(1100, 820, 760, 540, "BÄCKEREI", "#7A5A40", ("#6B2A20", "#E8D5AE"), era, interior=I.pan(1240, 700, 0.9))]
+    s.append(I.multitud(30, 700, 960, 9, 31, t, era, filas=2, h=290, mira=1))
+    q = ease_io(c01(t / max(1, dur * 0.8)))
+    x = lerp(300, 820, q)
+    s.append(I.carretilla(x, 1020, 1.25, bc("marco")))
+    s.append(I.persona(x + 290, 1020, 330, 44, t, "empuja" if q < 1 else "pie", era, -1))
+    s.append(I.etiqueta_precio(1200, 520, v.get("precio", "200.000.000.000"), 0.95, "#FFF6D6", -5))
+    s.append(rotulo("1 pan", 1240, 610, t, 0.6, 30))
+    return "".join(s)
+
+
+def esc_bolsas(v, t, dur, ctx):
+    era = v.get("era", "1980")
+    s = [I.calle(era, t, base=780, densidad=1.1)]
+    cols = ["#E63946", "#2A9D8F", "#F4A261"]
+    for i in range(3):
+        s.append(I.puesto_mercado(200 + i * 620, 840, 420, cols[i], i + 4, ["papas", "verduras", "frutas"][i]))
+    for i in range(5):
+        x = (200 + i * 380 + t * 60) % 2100 - 100
+        saco = I.saco_dinero(30, -250, 0.6, "#C2A266", "$b")
+        s.append(I.persona(x, 1010 - (i % 2) * 30, 300, 60 + i, t, "camina", era, 1, carga=saco))
+    s.append(I.carretilla(1500, 1040, 0.9, bc(v.get("color", "peso_bo"))))
+    return "".join(s)
+
+
+def esc_remarcar(v, t, dur, ctx):
+    s = [pared("#E9E4D8", "#BFB8AA", 900)]
+    s.append(I.estante(60, 860, 1100, 4, 9))
+    s.append(I.persona(1500, 1040, 420, 71, t, "carga", "1980", -1, ropa="#2980B9", carga=I.pistola_precios(-70, -250, 10, 0.55)))
+    n = int(c01((t - 0.6) / max(1, dur - 1.2)) * 12)
+    precio = 100
+    for i in range(n + 1):
+        precio = int(precio * 1.38)
+        s.append(I.etiqueta_precio(560 - i * 6, 620 - i * 30, "₳ " + V1.fmt_num(precio), 1.0, "#FFF6D6", -6 + (i % 3) * 3))
+    s.append(rotulo("Remarcando precios varias veces al día", 640, 160, t, 0.4, 36))
+    return "".join(s)
+
+
+def esc_saqueos(v, t, dur, ctx):
+    era = "1980"
+    s = [I.calle(era, t, base=800)]
+    s.append(I.tienda(560, 800, 800, 520, "SUPERMERCADO", "#D9D2C0", ("#2980B9", "#FFFFFF"), era))
+    s.append(f'<rect x="590" y="{f(800 - 520 * 0.62)}" width="{f(800 * 0.55)}" height="{f(520 * 0.42)}" fill="#8C959D"/>'
+             + "".join(f'<path d="M590 {f(800 - 520 * 0.62 + i * 18)} h{f(800 * 0.55)}" stroke="#5E666E" stroke-width="3"/>' for i in range(12)))
+    s.append(I.multitud(0, 1920, 1040, 24, 14, t, era, filas=3, h=300, poses=["brazos", "pie", "brazos", "camina"]))
+    return "".join(s)
+
+
+def esc_tienda_vacia(v, t, dur, ctx):
+    s = [pared("#E6E2D6", "#B9B2A4", 900)]
+    s.append(I.estante(60, 860, 860, 4, 5, 0.88))
+    s.append(I.estante(1000, 860, 860, 4, 6, 0.92))
+    canasta = '<path d="M30 -170 h80 l-10 60 h-60 Z" fill="none" stroke="#C0392B" stroke-width="7"/>'
+    s.append(I.persona(900, 1040, 400, 81, t, "pie", "2010", -1, carga=canasta, triste=True))
+    return "".join(s)
+
+
+def esc_hielo(v, t, dur, ctx):
+    s = [mesa("#3E5A6B")]
+    g = c01((t - 0.8) / max(1, dur - 2.2))
+    if t < dur - 1.0:
+        s.append(I.hielo(960, 520 + 4 * math.sin(t * 2), I.etiqueta_precio(-180, 0, "$ 1.000", 1.4, "#FFF6D6", -4), g))
+        s.append(rotulo("Precio congelado", 960, 860, t, 0.4, 40))
+    else:
+        q = c01((t - (dur - 1.0)) / 0.8)
+        r = random.Random(7)
+        for _ in range(16):
+            ang = r.uniform(0, 6.28)
+            d = 500 * q
+            s.append(f'<rect x="{f(960 + math.cos(ang) * d - 40)}" y="{f(520 + math.sin(ang) * d - 40 + 300 * q * q)}" width="80" height="80" fill="#DFF4FB" opacity="{f(0.7 * (1 - q))}" transform="rotate({f(q * 200)} 960 520)"/>')
+        s.append(I.etiqueta_precio(780, 520, "$ " + V1.fmt_num(1000 * (1 + 4 * q)), 1.4 + 0.2 * q, "#FFF6D6", -4, ROJO))
+        s.append(rotulo("Se descongela... y salta", 960, 860, t, dur - 1.0, 40, ROJO))
+    return "".join(s)
+
+
+def esc_urv(v, t, dur, ctx):
+    s = [pared("#EDE7DA", "#BDB4A3", 860)]
+    s.append(I.estante(240, 820, 1440, 3, 13))
+    paso = int(max(0, t - 0.5) / 0.55)
+    viejo = 12000 * (1.012 ** (paso * 3))
+    s.append(f'<g transform="translate(520 380)"><rect x="-300" y="-170" width="600" height="300" rx="20" fill="#FFFFFF" stroke="#B3261E" stroke-width="8"/>'
+             + txt(0, -100, "CRUZEIROS REALES", 34, "#B3261E", 800)
+             + txt(0, 30, "CR$ " + V1.fmt_num(viejo), 72, "#2B2B2B", 900) + txt(0, 100, "cambia todos los días", 28, GRIS, 600) + '</g>')
+    s.append(f'<g transform="translate(1400 380)"><rect x="-300" y="-170" width="600" height="300" rx="20" fill="#FFFFFF" stroke="#2E9E5B" stroke-width="8"/>'
+             + txt(0, -100, "URV (UNIDAD DE VALOR)", 34, "#2E9E5B", 800)
+             + txt(0, 30, "URV 10,00", 72, "#2B2B2B", 900) + txt(0, 100, "1 URV ≈ 1 dólar · estable", 28, GRIS, 600) + '</g>')
+    return "".join(s)
+
+
+# ---------------------------------------------------------------- escenas: dinero
+def esc_billete(v, t, dur, ctx):
+    s = [mesa("#5E4128")]
+    p = ease_out(prog(t, 0.1, 0.8))
+    s.append(f'<g opacity="{f(p)}">' + I.billete(960, lerp(640, 430, p), 1400, v["valor"], v["moneda"], bc(v["color"]), rot=lerp(-12, -3, p) + math.sin(t), sello=v.get("sello")) + '</g>')
+    nz = v["valor"].count("0")
+    if v["valor"].startswith("1") and nz > 4:
+        s.append(rotulo(f"un 1 con {nz} ceros", 960, 140, t, 1.0, 48, FONDO1, ORO))
+    for i in range(4):
+        cx, cy = 260 + i * 70, 930 - (i % 2) * 20
+        s.append(f'<ellipse cx="{cx}" cy="{cy}" rx="44" ry="18" fill="#B08D57"/><ellipse cx="{cx}" cy="{cy - 6}" rx="44" ry="18" fill="#D4AF6A"/>')
+    return "".join(s)
+
+
+def esc_nuevo_billete(v, t, dur, ctx):
+    s = [mesa("#5E4128")]
+    s.append(I.pila(140, 980, 4, 3, 6, bc(v["viejo"]), 110))
+    s.append(f'<rect width="1920" height="1080" fill="#000" opacity="{f(0.35 * ease_out(prog(t, 0.8, 1)))}"/>')
+    p = ease_out(prog(t, 0.6, 1.0))
+    if p > 0:
+        s.append(f'<circle cx="1180" cy="500" r="{f(520 * p)}" fill="#FFE9B0" opacity="{f(0.25 * p)}"/>')
+        s.append(f'<g opacity="{f(p)}">' + I.billete(1180, lerp(-300, 500, p), 1000, v["valor"], v["moneda"], bc(v["nuevo"]), rot=lerp(25, -4, p)) + '</g>')
+    q = prog(t, 1.8, 0.4)
+    if q > 0:
+        k = 1.8 - 0.8 * ease_out(q)
+        s.append(f'<g transform="translate(1450 760) rotate(-12) scale({f(k)})" opacity="{f(q)}"><rect x="-200" y="-55" width="400" height="110" rx="10" fill="none" stroke="#B3261E" stroke-width="8"/>'
+                 + txt(0, 20, v["fecha"], 52, "#B3261E", 900) + '</g>')
+    return "".join(s)
+
+
+def esc_ceros(v, t, dur, ctx):
     num = v["numero"]
     quitar = v.get("quitar", 0)
     etapas = v.get("etapas")
     chars = list(num)
     quita = [False] * len(chars)
-    orden = []  # índices quitados en orden de caída (derecha a izquierda)
+    orden = []
     cnt, i = 0, len(chars) - 1
     while i >= 0 and cnt < quitar:
         if chars[i] == "0":
@@ -534,41 +429,39 @@ def ceros(v, t, dur):
     if quitar and i >= 0 and chars[i] == ".":
         quita[i] = True
         orden.append(i)
-    fs = min(190, 1560 / (len(chars) * 0.6))
-    cw = fs * 0.6
-    x0 = 960 - len(chars) * cw / 2
-    yb = 520
-    s = [txt(960, 260, "QUITANDO CEROS" if quitar else "LA CONVERSIÓN", 40, ORO, 800, extra='letter-spacing="10"')]
-    # tiempos de caída
-    inicio = 1.0
-    fin_caida = max(inicio + 0.6, dur * 0.62)
+    inicio, fin = 1.0, max(1.8, dur * 0.6)
     tiempos = {}
     if etapas:
-        grupos, pos = [], 0
-        ceros_orden = orden[:]
-        # repartir por cantidad de ceros
-        idx = 0
+        grupos, idx = [], 0
         for g in etapas:
             grp, z = [], 0
-            while idx < len(ceros_orden) and z < g:
-                if chars[ceros_orden[idx]] == "0":
+            while idx < len(orden) and z < g:
+                if chars[orden[idx]] == "0":
                     z += 1
-                grp.append(ceros_orden[idx])
+                grp.append(orden[idx])
                 idx += 1
             grupos.append(grp)
-        if idx < len(ceros_orden):
-            grupos[-1] += ceros_orden[idx:]
-        tg = (fin_caida - inicio) / len(grupos)
+        grupos[-1] += orden[idx:]
+        tg = (fin - inicio) / len(grupos)
         for gi, grp in enumerate(grupos):
             for k, ci in enumerate(grp):
-                tiempos[ci] = inicio + gi * tg + k * min(0.07, tg * 0.5 / max(1, len(grp)))
+                tiempos[ci] = inicio + gi * tg + k * 0.06
     else:
-        paso = (fin_caida - inicio) / max(1, len(orden))
+        paso = (fin - inicio) / max(1, len(orden))
         for k, ci in enumerate(orden):
             tiempos[ci] = inicio + k * paso
+    cambio = ease_out(prog(t, fin + 0.2, 0.6))
+    col = I.mezclar(bc(v["color"]), bc(v.get("nuevo_color", v["color"])), cambio)
+    moneda = v["moneda"] if cambio < 0.5 else v.get("nueva_moneda", v["moneda"])
+    s = [mesa("#5E4128")]
+    bw = 1500
+    s.append(I.billete(960, 500, bw, "", moneda, col, rot=0, emblema=True))
+    fs = min(150, bw * 0.82 / (len(chars) * 0.6))
+    cw = fs * 0.6
+    x0 = 960 - len(chars) * cw / 2
+    yb = 500 + fs * 0.45
     restantes = [i for i in range(len(chars)) if not quita[i]]
-    p_centro = ease_io(prog(t, fin_caida + 0.3, 0.6)) if quitar else 0
-    nr = len(restantes)
+    pc = ease_io(prog(t, fin, 0.6)) if quitar else 0
     for i, ch in enumerate(chars):
         x = x0 + i * cw + cw / 2
         if quita[i]:
@@ -576,366 +469,500 @@ def ceros(v, t, dur):
             q = c01((t - tc) / 0.9)
             if q >= 1:
                 continue
-            dy = 900 * q * q
-            rot = (40 if i % 2 else -30) * q
-            col = ROJO if t > tc - 0.25 else BLANCO
-            s.append(f'<g opacity="{f(1 - q)}" transform="translate({f(x)} {f(yb + dy)}) rotate({f(rot)})">' + txt(0, 0, ch, fs, col, 800, fam=MONO) + '</g>')
+            c = ROJO if t > tc - 0.2 else "#141414"
+            s.append(f'<g opacity="{f(1 - q)}" transform="translate({f(x + 60 * q * (1 if i % 2 else -1))} {f(yb + 700 * q * q)}) rotate({f((40 if i % 2 else -30) * q)})">' + txt(0, 0, ch, fs, c, 900, fam=V1.MONO) + '</g>')
         else:
             k = restantes.index(i)
-            xc = 960 + (k - (nr - 1) / 2) * cw
-            xx = lerp(x, xc, p_centro)
-            esc = 1 + 0.5 * p_centro
-            s.append(f'<g transform="translate({f(xx)} {f(yb)}) scale({esc:.3f})">' + txt(0, 0, ch, fs, BLANCO, 800, fam=MONO) + '</g>')
-    if v.get("moneda"):
-        op = 1 - prog(t, fin_caida, 0.4) if quitar else 1
-        if op > 0:
-            s.append(f'<g opacity="{op:.2f}">' + aparece(txt(960, yb + 90, v["moneda"], 44, GRIS, 700), t, 0.3, 0.4) + '</g>')
+            xc = 960 + (k - (len(restantes) - 1) / 2) * cw
+            esc = 1 + 0.6 * pc
+            s.append(f'<g transform="translate({f(lerp(x, xc, pc))} {f(yb)}) scale({f(esc)})">' + txt(0, 0, ch, fs, "#141414", 900, fam=V1.MONO) + '</g>')
     if etapas:
         anios = ["2008", "2018", "2021"]
-        tg = (fin_caida - inicio) / len(etapas)
+        tg = (fin - inicio) / len(etapas)
         for gi, g in enumerate(etapas):
-            x = 960 + (gi - 1) * 380
-            s.append(aparece(f'<rect x="{x - 160}" y="630" width="320" height="76" rx="38" fill="{PANEL}" stroke="{ROJO}" stroke-width="3"/>'
-                             + txt(x, 681, f"{anios[gi] if gi < 3 else ''}:  −{g} ceros", 36, BLANCO, 800), t, inicio + gi * tg, 0.4, cx=x, cy=668, escala=True))
-    res = v.get("resultado", "")
-    t_res = fin_caida + 0.6 if quitar else 1.2
-    if res:
-        w = ancho_txt(res, 64) + 90
-        y = 812 if etapas else 720
-        s.append(aparece(f'<rect x="{f(960 - w / 2)}" y="{y - 70}" width="{f(w)}" height="100" rx="50" fill="{VERDE}"/>'
-                         + txt(960, y + 2, res, 64, FONDO1, 900), t, t_res, 0.5, cx=960, cy=y - 20, escala=True))
+            x = 960 + (gi - 1) * 400
+            s.append(aparece(f'<rect x="{x - 170}" y="110" width="340" height="80" rx="40" fill="#0E1620" stroke="{ROJO}" stroke-width="4"/>'
+                             + txt(x, 163, f"{anios[gi]}:  −{g} ceros", 38, BLANCO, 800), t, inicio + gi * tg, 0.4, cx=x, cy=150, escala=True))
+    else:
+        s.append(rotulo(f"−{quitar} ceros" if quitar else "conversión", 960, 170, t, inicio, 46, BLANCO, "#0E1620"))
+    if v.get("extra"):
+        s.append(rotulo(v["extra"], 960, 900, t, fin + 0.7, 56, FONDO1, VERDE))
     return "".join(s)
 
 
-def billete(v, t, dur):
-    valor = v["valor"]
-    col = v.get("color", "#A5D6A7")
-    p = ease_out(prog(t, 0.15, 0.8))
-    rot = lerp(-14, -3, p) + 1.2 * math.sin(t * 1.3)
-    y = lerp(780, 440, p) + 8 * math.sin(t * 1.7)
-    bw, bh = 1300, 520
-    gu = []
-    for k in range(9):
-        amp = 18 + k * 3
-        d = "M-560 " + " ".join(f"L{f(-560 + j * 20)} {f(-200 + k * 48 + amp * math.sin(j * 0.45 + k))}" for j in range(57))
-        gu.append(f'<path d="{d}" fill="none" stroke="#000" stroke-opacity="0.12" stroke-width="2"/>')
-    fs = min(118, 1100 / (len(valor) * 0.62))
-    ros = "".join(f'<ellipse rx="96" ry="34" fill="none" stroke="#000" stroke-opacity="0.22" stroke-width="3" transform="rotate({a})"/>' for a in range(0, 180, 30))
-    nota = (f'<g transform="translate(960 {f(y)}) rotate({f(rot)})">'
-            f'<rect x="{-bw / 2 + 14}" y="{-bh / 2 + 18}" width="{bw}" height="{bh}" rx="20" fill="#000" opacity="0.35"/>'
-            f'<rect x="{-bw / 2}" y="{-bh / 2}" width="{bw}" height="{bh}" rx="20" fill="{col}"/>'
-            f'<rect x="{-bw / 2 + 26}" y="{-bh / 2 + 26}" width="{bw - 52}" height="{bh - 52}" rx="12" fill="none" stroke="#000" stroke-opacity="0.45" stroke-width="5"/>'
-            + "".join(gu)
-            + f'<g transform="translate(-450 -110)">{ros}<circle r="40" fill="none" stroke="#000" stroke-opacity="0.3" stroke-width="4"/></g>'
-            + txt(0, -150, v.get("moneda", ""), 46, "#1B1B1B", 900, extra='letter-spacing="8" opacity="0.8"')
-            + txt(0, 40 + fs * 0.1, valor, fs, "#141414", 900)
-            + txt(bw / 2 - 70, -bh / 2 + 100, "★", 70, "#000", 900, extra='opacity="0.4"')
-            + txt(0, 200, "BANCO CENTRAL", 34, "#1B1B1B", 800, extra='letter-spacing="14" opacity="0.6"')
-            + '</g>')
-    s = [nota]
-    nceros = valor.count("0")
-    chip = f"un 1 con {nceros} ceros" if valor.startswith("1") and nceros > 4 else ""
-    chips = [(c, col_c, st) for c, col_c, st in ((chip, ORO, 1.0), (v.get("nota", ""), TURQ, 1.4)) if c]
-    ws = [ancho_txt(c, 44) + 70 for c, _, _ in chips]
-    x = 960 - (sum(ws) + 30 * (len(ws) - 1)) / 2
-    for (c, col_c, st), w in zip(chips, ws):
-        s.append(aparece(f'<rect x="{f(x)}" y="770" width="{f(w)}" height="76" rx="38" fill="{col_c}"/>' + txt(x + w / 2, 822, c, 44, FONDO1, 900),
-                         t, st, 0.45, cx=x + w / 2, cy=808, escala=True))
-        x += w + 30
+def esc_montana_vs(v, t, dur, ctx):
+    s = [mesa("#4E3824")]
+    q = c01((t - 0.3) / max(1, dur * 0.6))
+    s.append(I.pila(60, 1000, 7, 4, 10, bc(v["color"]), 100, visibles=q * 280, seed=3))
+    p = ease_out(prog(t, dur * 0.45, 0.7))
+    if p > 0:
+        s.append(f'<ellipse cx="1550" cy="860" rx="{f(260 * p)}" ry="40" fill="#FFE9B0" opacity="{f(0.3 * p)}"/>')
+        s.append(f'<g opacity="{f(p)}">' + I.billete(1550, 720 - 30 * math.sin(t * 2), 520, "1", v["contra"].upper().replace("FORINTO", "FORINT"), bc(v["contra"]), rot=-5) + '</g>')
+    s.append(rotulo("=", 1180, 760, t, dur * 0.45, 90, ORO))
     return "".join(s)
 
 
-def _envolver(s, n):
-    pal, lin, act = s.split(), [], ""
-    for p in pal:
-        if act and len(act + " " + p) > n:
-            lin.append(act)
-            act = p
-        else:
-            act = (act + " " + p).strip()
-    if act:
-        lin.append(act)
-    return lin
+def esc_adopengo(v, t, dur, ctx):
+    s = [mesa("#5E4128")]
+    s.append(I.billete(560, 420, 760, "1.000.000", "PENGŐ", bc("pengo"), rot=-6))
+    p = ease_out(prog(t, 0.4, 0.7))
+    caida = c01((t - dur * 0.55) / 1.2)
+    s.append(f'<g opacity="{f(p)}" transform="translate(0 {f(500 * caida * caida)}) rotate({f(20 * caida)} 1380 460)">' + I.billete(1380, 460, 760, "1", "ADÓPENGŐ", "#E8C39E", rot=5, sello="IMPUESTOS") + '</g>')
+    pts = [(200, 220), (600, 280), (900, 420), (1200, 600), (1500, 820), (1800, 1000)]
+    q = c01((t - dur * 0.4) / 1.5)
+    n = int(q * (len(pts) - 1)) + 1
+    if q > 0:
+        s.append('<path d="M' + " L".join(f"{x} {y}" for x, y in pts[:n + 1]) + f'" stroke="{ROJO}" stroke-width="16" fill="none" stroke-linecap="round"/>')
+    return "".join(s)
 
 
-def tiempo(v, t, dur):
+def esc_billetes_serie(v, t, dur, ctx):
+    s = [mesa("#5E4128")]
+    items = v["items"]
+    paso = (dur * 0.75) / len(items)
+    for i, (nom, anio, col) in enumerate(items):
+        st = 0.3 + i * paso
+        p = ease_out(prog(t, st, 0.6))
+        if p <= 0:
+            continue
+        x, y = 420 + i * 360, 470 + (i % 2) * 90
+        s.append(f'<g opacity="{f(p)}">' + I.billete(x, lerp(-200, y, p), 560, anio, nom, col, rot=-8 + i * 5) + '</g>')
+        if t > st + paso and i < len(items) - 1:
+            q = prog(t, st + paso, 0.3)
+            s.append(f'<path d="M{x - 200} {y - 110} L{f(x - 200 + 400 * q)} {f(y - 110 + 220 * q)} M{x + 200} {y - 110} L{f(x + 200 - 400 * q)} {f(y - 110 + 220 * q)}" stroke="{ROJO}" stroke-width="18" stroke-linecap="round"/>')
+    return "".join(s)
+
+
+def esc_boveda(v, t, dur, ctx):
+    s = [I.boveda(t)]
+    izq = I.billete(0, -60, 300, "1", "PESO", bc("real"), rot=0, emblema=False)
+    der = I.billete(0, -60, 300, "1", "US$", bc("dolar"), rot=0, emblema=False)
+    s.append(f'<g transform="translate(0 40)">' + I.bascula(1340, 1060, t, izq, der, 0.08 * math.sin(t * 2) * c01(1 - t / 3)) + '</g>')
+    s.append(rotulo("Cada peso, respaldado por un dólar en reservas", 960, 140, t, 0.4, 38))
+    return "".join(s)
+
+
+def esc_dolarizacion(v, t, dur, ctx):
+    s = [mesa("#5E4128")]
+    q = ease_io(c01((t - 0.6) / 1.4))
+    s.append(f'<g transform="translate({f(-500 * q)} {f(200 * q)}) rotate({f(-15 * q)} 500 700)" opacity="{f(1 - 0.8 * q)}">' + I.pila(200, 900, 4, 3, 5, bc("zim"), 110) + '</g>')
+    for i, (val, mon, col) in enumerate((("100", "US DOLLARS", bc("dolar")), ("20", "US DOLLARS", bc("dolar")), ("100", "RAND", "#D7B58A"), ("50", "PULA", "#A9CBE0"))):
+        p = ease_out(prog(t, 1.2 + i * 0.35, 0.6))
+        if p > 0:
+            s.append(f'<g opacity="{f(p)}">' + I.billete(1250 + i * 80, lerp(1300, 380 + i * 110, p), 640, val, mon, col, rot=-14 + i * 9) + '</g>')
+    return "".join(s)
+
+
+def esc_pollo(v, t, dur, ctx):
+    s = [I.calle("2010", t, base=860, densidad=1.2)]
+    s.append(f'<rect x="300" y="840" width="1320" height="240" fill="#7A5636"/><rect x="300" y="840" width="1320" height="20" fill="#9A7650"/>')
+    pila = I.pila(-170, 0, 3, 2, 4, bc("bolivar"), 90)
+    s.append(I.bascula(960, 860, t, pila, I.pollo(0, 0, 0.95), 0.0))
+    return "".join(s)
+
+
+def esc_tijera_ceros(v, t, dur, ctx):
+    s = [mesa("#5E4128")]
+    s.append(I.billete(960, 520, 1500, "", "BILLETE NUEVO", bc("real")))
+    texto = "1.000"
+    ciclo = (t % 3.0) / 3.0
+    fs = 170
+    cw = fs * 0.6
+    base = "1"
+    if ciclo < 0.35:
+        mostrar = "1.000"
+    elif ciclo < 0.55:
+        mostrar = "1"
+    else:
+        n = int((ciclo - 0.55) / 0.45 * 5)
+        mostrar = ["1", "1.0", "1.00", "1.000", "1.000", "1.000"][min(5, n)]
+    x0 = 960 - len(mostrar) * cw / 2
+    for i, ch in enumerate(mostrar):
+        col = ROJO if (ciclo >= 0.55 and i > 0) else "#141414"
+        s.append(txt(x0 + i * cw + cw / 2, 520 + fs * 0.4, ch, fs, col, 900, fam=V1.MONO))
+    tx = 960 + 160 if ciclo < 0.45 else 1500
+    s.append(I.tijera(tx, 470, 90, 1.2, abs(math.sin(t * 6))))
+    s.append(rotulo("Los ceros vuelven a crecer", 960, 170, t, 1.6, 44, ROJO))
+    _ = (texto, base)
+    return "".join(s)
+
+
+# ---------------------------------------------------------------- escenas: lugares y gente
+def esc_huelga_imprenta(v, t, dur, ctx):
+    era = v.get("era", "1920")
+    izq = I.calle(era, t, seed=12) + I.fabrica(80, 820, 900, t, apagada=True) + I.multitud(0, 980, 1000, 12, 41, t, era, filas=2, h=290, mira=1)
+    izq += rotulo("Huelga en el Ruhr", 480, 140, t, 0.4, 40)
+    der = (pared("#4A4038", "#3A322C", 860) + I.imprenta(1350, 900, t, 0.85, bc(v.get("color", "marco")))
+           + rotulo("La impresora a toda marcha", 1400, 140, t, 0.9, 40))
+    p = ease_out(prog(t, 0.2, 0.8))
+    xc = lerp(1920, 960, p)
+    return (izq + f'<clipPath id="cder"><polygon points="{f(xc + 120)},0 1920,0 1920,1080 {f(xc - 120)},1080"/></clipPath>'
+            f'<g clip-path="url(#cder)">{der}</g><path d="M{f(xc + 120)} 0 L{f(xc - 120)} 1080" stroke="{ORO}" stroke-width="10"/>')
+
+
+def esc_imprenta(v, t, dur, ctx):
+    era = v.get("era", "1940")
+    s = [pared("#5A4B40", "#3A322C", 860)]
+    for x in (220, 860, 1500):
+        s.append(f'<rect x="{x}" y="120" width="260" height="360" fill="#BFD7E3" opacity="0.25"/><path d="M{x + 130} 120 V480 M{x} 300 H{x + 260}" stroke="#3A322C" stroke-width="12"/>')
+    s.append(I.imprenta(560, 920, t, 0.8, bc(v.get("color", "pengo"))))
+    s.append(I.imprenta(1380, 940, t + 0.5, 0.75, bc(v.get("color", "pengo"))))
+    s.append(I.persona(170, 1000, 320, 51, t, "pie", era, 1))
+    s.append(I.lluvia_billetes(t, bc(v.get("color", "pengo")), 14, 5, -300, 160))
+    return "".join(s)
+
+
+def esc_ruinas(v, t, dur, ctx):
+    s = [I.ruinas(t)]
+    for i in range(5):
+        x = (100 + i * 300 + t * 40) % 2000 - 60
+        s.append(I.persona(x, 1050 - (i % 2) * 20, 260, 90 + i, t, "camina", "1940", 1, triste=True))
+    return "".join(s)
+
+
+def esc_reloj(v, t, dur, ctx):
+    s = [pared("#CFC6B4", "#6B5A48", 820)]
+    s.append(I.reloj(560, 470, 280, t, vel=2.2))
+    horas = int(max(0, t - 0.5) * 2.2 * 12 / 15)
+    s.append(f'<g transform="translate(1380 600)"><rect x="-330" y="-230" width="660" height="420" rx="24" fill="#0E1620" opacity="0.9"/>'
+             + txt(0, -150, f"HORA {horas * 15}", 46, GRIS, 800)
+             + txt(0, -20, "Precio × " + V1.fmt_num(2 ** horas), 76, ROJO, 900)
+             + txt(0, 100, "se duplica cada 15 horas", 36, BLANCO, 700) + '</g>')
+    return "".join(s)
+
+
+def esc_ahorros(v, t, dur, ctx):
+    return I.mesa_familia(t, v.get("era", "1920"))
+
+
+def esc_mineros(v, t, dur, ctx):
+    s = [I.mina(t)]
+    for i in range(7):
+        x = 520 + i * 170 + t * 35
+        s.append(I.minero(x, 990 + (i % 2) * 30, 0.95, t, i, "camina"))
+    return "".join(s)
+
+
+def esc_decreto(v, t, dur, ctx):
+    s = [mesa("#5E4128")]
+    s.append(f'<g transform="translate(0 0)">' + V1.bandera(v.get("bandera", "bolivia"), 120, 120, 300, 200) + '</g>')
+    s.append(I.documento(1000, 560, 900, 840, v["titulo"], v["lineas"], t, firma=prog(t, 1.0, 1.4), sello=prog(t, 2.6, 0.4)))
+    return "".join(s)
+
+
+def esc_petroleo(v, t, dur, ctx):
+    s = [I.cielo("1980", t, sol=(1600, 640)), '<rect y="760" width="1920" height="320" fill="#8C6E4A"/>',
+         '<path d="M0 760 Q 480 720 960 755 T 1920 750 V 800 H 0 Z" fill="#6E5638"/>']
+    for i, (x, k) in enumerate(((300, 0.9), (900, 1.2), (1500, 0.8))):
+        s.append(I.bomba_petroleo(x, 900 - (i % 2) * 40, t, k, i))
+    pts = [(2014.4, 112), (2014.8, 85), (2015.0, 50), (2015.4, 62), (2015.8, 45), (2016.05, 30)]
+    x0, x1, y0, y1 = 520, 1380, 520, 250
+    xy = [(lerp(x0, x1, (a - 2014.4) / 1.65), lerp(y0, y1, b / 120)) for a, b in pts]
+    q = c01((t - 0.6) / max(1, dur * 0.6))
+    n = q * (len(xy) - 1)
+    k = int(n)
+    vis = xy[:k + 1]
+    if k < len(xy) - 1:
+        fr = n - k
+        vis.append((lerp(xy[k][0], xy[k + 1][0], fr), lerp(xy[k][1], xy[k + 1][1], fr)))
+    s.append(f'<rect x="{x0 - 60}" y="{y1 - 100}" width="{x1 - x0 + 140}" height="{y0 - y1 + 160}" rx="20" fill="#0E1620" opacity="0.55"/>')
+    s.append(txt(x0, y1 - 40, "Precio del barril (US$)", 34, BLANCO, 800, "start"))
+    if len(vis) > 1:
+        s.append('<path d="M' + " L".join(f"{f(x)} {f(y)}" for x, y in vis) + f'" stroke="{ROJO}" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>')
+    s.append(txt(xy[0][0] - 10, xy[0][1] - 20, "≈ 110 (2014)", 30, BLANCO, 800, "start"))
+    if q >= 1:
+        s.append(txt(xy[-1][0], xy[-1][1] + 50, "≈ 30 (2016)", 30, ROJO, 900))
+    return "".join(s)
+
+
+def esc_confianza(v, t, dur, ctx):
+    s = ['<defs><linearGradient id="cf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2B705"/><stop offset="1" stop-color="#C2571A"/></linearGradient></defs>',
+         '<rect width="1920" height="1080" fill="url(#cf)"/>']
+    s.append(f'<g opacity="0.35">' + I.billete(960, 380, 1300, "", "CONFIANZA", "#FFF6D6") + '</g>')
+    s.append(I.multitud(0, 1920, 1080, 30, 77, t, "2010", filas=3, h=260, fondo="#C2571A"))
+    s.append(I.manos_apreton(960, 330, 0.9, t))
+    return "".join(s)
+
+
+def esc_suscribete(v, t, dur, ctx):
+    s = [fondo_mapa_oscuro("mundo", t, dur), V1.suscribete(v, t, dur)]
+    return "".join(s)
+
+
+def esc_periodicos(v, t, dur, ctx):
+    era = v.get("era", "1980")
+    papel = {"1920": "#E8DDC4", "1940": "#E2DCCB", "1980": "#F1EBDD", "2010": "#F7F5F0"}[era]
+    s = [mesa("#3E2C1E")]
     ev = v["eventos"]
     n = len(ev)
-    x0, x1, y = 220, 1700, 560
-    pl = ease_io(prog(t, 0.2, max(1.0, dur * 0.65)))
-    s = [txt(960, 260, "LÍNEA DE TIEMPO", 40, ORO, 800, extra='letter-spacing="10"')]
-    s.append(f'<path d="M{x0} {y} H{x1}" stroke="{LINEA}" stroke-width="6" stroke-linecap="round"/>')
-    s.append(f'<path d="M{x0} {y} H{f(lerp(x0, x1, pl))}" stroke="{ORO}" stroke-width="6" stroke-linecap="round"/>')
-    for i, (fecha, texto) in enumerate(ev):
-        x = lerp(x0 + 120, x1 - 120, i / (n - 1) if n > 1 else 0.5)
-        frac = (x - x0) / (x1 - x0)
-        st = 0.2 + frac * max(1.0, dur * 0.65) - 0.1
-        arriba = i % 2 == 0
-        col = ORO if i < n - 1 else (ROJO if any(w in texto.lower() for w in ("crisis", "hiper", "vuelve", "fin")) else VERDE)
-        nodo = (f'<circle cx="{f(x)}" cy="{y}" r="22" fill="{FONDO1}" stroke="{col}" stroke-width="7"/><circle cx="{f(x)}" cy="{y}" r="9" fill="{col}"/>')
-        lines = _envolver(texto, 16)
-        if arriba:
-            card_y = y - 70 - 60 * len(lines) - 70
-        else:
-            card_y = y + 70
-        ch = 70 + 56 * len(lines)
-        card = (f'<path d="M{f(x)} {y + (-26 if arriba else 26)} V{f(card_y + (ch if arriba else 0))}" stroke="{col}" stroke-width="3"/>'
-                f'<rect x="{f(x - 190)}" y="{f(card_y)}" width="380" height="{f(ch)}" rx="20" fill="{PANEL}" stroke="{LINEA}" stroke-width="2"/>'
-                + txt(x, card_y + 50, fecha, 38, col, 900)
-                + "".join(txt(x, card_y + 104 + k * 50, ln, 38, BLANCO, 700) for k, ln in enumerate(lines)))
-        s.append(aparece(nodo, t, st, 0.35, cx=x, cy=y, escala=True))
-        s.append(aparece(card, t, st + 0.1, 0.4, 30 if arriba else -30))
-    return "".join(s)
-
-
-def texto(v, t, dur):
-    frase = v["frase"]
-    # tokens con resaltado *...*
-    tokens = []
-    resal = False
-    for parte in re.split(r"(\*)", frase):
-        if parte == "*":
-            resal = not resal
+    paso = (dur * 0.7) / n
+    w = min(520, 1700 / n - 30)
+    pos = []
+    for i, (fecha, titular, ico) in enumerate(ev):
+        x = 960 + (i - (n - 1) / 2) * (w + 40)
+        y = 500 + (i % 2) * 50 - 25
+        pos.append((x, y - 250))
+        st = 0.3 + i * paso
+        p = ease_out(prog(t, st, 0.5))
+        if p <= 0:
             continue
-        for p in parte.split():
-            tokens.append((p, resal))
-    fs = 104
-    lineas, act, largo = [], [], 0
-    for tok in tokens:
-        if act and largo + len(tok[0]) + 1 > 20:
-            lineas.append(act)
-            act, largo = [], 0
-        act.append(tok)
-        largo += len(tok[0]) + 1
-    if act:
-        lineas.append(act)
-    if max(sum(len(p) + 1 for p, _ in ln) for ln in lineas) > 18:
-        fs = 92
-    s = []
-    y0 = 520 - (len(lineas) - 1) * fs * 0.62
-    k = 0
-    for li, ln in enumerate(lineas):
-        anchos = [ancho_txt(p, fs, 900) for p, _ in ln]
-        esp = fs * 0.3
-        total = sum(anchos) + esp * (len(ln) - 1)
-        x = 960 - total / 2
-        y = y0 + li * fs * 1.25
-        for (p, r), w in zip(ln, anchos):
-            st = 0.25 + k * 0.12
-            if r:
-                pb = ease_out(prog(t, st + 0.25, 0.4))
-                s.append(f'<rect x="{f(x - 12)}" y="{f(y - fs * 0.82)}" width="{f((w + 24) * pb)}" height="{f(fs * 1.05)}" rx="10" fill="{ORO}"/>')
-                s.append(aparece(txt(x, y, p, fs, FONDO1 if pb > 0.5 else ORO, 900, "start"), t, st, 0.4, 50))
-            else:
-                s.append(aparece(txt(x, y, p, fs, BLANCO, 900, "start"), t, st, 0.4, 50))
-            x += w + esp
-            k += 1
-    if v.get("sub"):
-        yy = y0 + len(lineas) * fs * 1.25 + 30
-        s.append(f'<rect x="{f(960 - 60 * ease_out(prog(t, 0.9, 0.5)))}" y="{f(yy - 60)}" width="{f(120 * ease_out(prog(t, 0.9, 0.5)))}" height="5" fill="{ORO}"/>')
-        s.append(aparece(txt(960, yy + 10, v["sub"], 44, GRIS, 600), t, 1.0, 0.5))
+        rot = (-4, 3, -2, 4)[i % 4]
+        k = 1.3 - 0.3 * p
+        fig = {"billete": I.billete(0, 0, w * 0.7, "", "", "#C9C2B0", emblema=True),
+               "banco": f'<g transform="scale({w / 1100:.3f})">' + I.banco_central(-420, 200, 840, 360, t, "#BDB6A6") + '</g>',
+               "grafica": f'<path d="M{-w * 0.35} {-60} L {-w * 0.1} -10 L {w * 0.05} -40 L {w * 0.35} 80" stroke="#3A3A3A" stroke-width="12" fill="none"/>'}[ico]
+        recorte = (f'<g transform="translate({f(x)} {f(y)}) rotate({rot}) scale({f(k)})" opacity="{f(p)}">'
+                   f'<rect x="{f(-w / 2 + 10)}" y="-262" width="{f(w)}" height="560" fill="#000" opacity="0.3"/>'
+                   f'<rect x="{f(-w / 2)}" y="-270" width="{f(w)}" height="560" fill="{papel}"/>'
+                   f'<text x="0" y="-215" text-anchor="middle" font-family="Liberation Serif, serif" font-weight="700" font-size="38" fill="#2B2B2B">EL DIARIO</text>'
+                   f'<path d="M{f(-w / 2 + 20)} -195 H{f(w / 2 - 20)} M{f(-w / 2 + 20)} -188 H{f(w / 2 - 20)}" stroke="#2B2B2B" stroke-width="2"/>'
+                   + txt(0, -130, fecha, 52, "#B3261E", 900)
+                   + "".join(txt(0, -70 + j * 44, ln, 36, "#1E1E1E", 900, fam="Liberation Serif, serif") for j, ln in enumerate(V1._envolver(titular, 18)))
+                   + f'<rect x="{f(-w * 0.4)}" y="40" width="{f(w * 0.8)}" height="200" fill="#D8D2C2"/><g transform="translate(0 140)">{fig}</g>'
+                   + '<circle cx="0" cy="-262" r="14" fill="#B3261E"/></g>')
+        s.append(recorte)
+    # hilo rojo
+    vis = [pp for i, pp in enumerate(pos) if t > 0.6 + i * paso]
+    if len(vis) > 1:
+        s.append('<path d="M' + " L".join(f"{f(x)} {f(y - 12)}" for x, y in vis) + '" stroke="#B3261E" stroke-width="4" fill="none"/>')
     return "".join(s)
 
 
-PAISES = [("alemania", "Alemania", "1923"), ("hungria", "Hungría", "1946"), ("bolivia", "Bolivia", "1985"), ("argentina", "Argentina", "1989"),
-          ("brasil", "Brasil", "1994"), ("zimbabue", "Zimbabue", "2008"), ("venezuela", "Venezuela", "2017")]
+# ---------------------------------------------------------------- paneles (viñetas ilustradas)
+def mini(clave, t, era):
+    if clave == "guerra":
+        s = I.ruinas(t, 900, "1940" if era != "1920" else "1940")
+        for i in range(4):
+            s += I.soldado(400 + i * 300, 1040, 1.1, t, i)
+        return s
+    if clave in ("deuda", "deuda_ext"):
+        tit, ln = ("REPARACIONES", ["132.000.000.000", "marcos oro · 1921"]) if clave == "deuda" else ("DEUDA EXTERNA", ["Bolivia · 1982", "Pagos vencidos"])
+        s = mesa("#5E4128") + I.documento(900, 540, 900, 900, tit, ln, t, 0, 1)
+        s += "".join(f'<ellipse cx="{1420 + i * 46}" cy="{820 - i * 30}" rx="34" ry="20" fill="none" stroke="#7A7F84" stroke-width="12"/>' for i in range(6))
+        return s + '<circle cx="1720" cy="560" r="130" fill="#2B2B2B"/>' + txt(1720, 580, "DEUDA", 50, "#FFFFFF", 900)
+    if clave == "candado":
+        return pared("#4A4038", "#3A322C", 860) + I.imprenta(980, 920, 0, 1.1, "#C9B98E", activa=False, cadena=1.0)
+    if clave == "imprenta":
+        return pared("#4A4038", "#3A322C", 860) + I.imprenta(980, 920, t, 1.1, "#B9D7A0") + I.lluvia_billetes(t, "#B9D7A0", 10, 2, -300, 180)
+    if clave == "respaldo":
+        return (I.cielo("1920", t) + '<path d="M0 640 Q 960 560 1920 640 V1080 H0 Z" fill="#9AAE6A"/>'
+                + "".join(f'<path d="M0 {700 + i * 50} Q 960 {640 + i * 50} 1920 {700 + i * 50}" stroke="#7E9450" stroke-width="10" fill="none"/>' for i in range(8))
+                + I.fabrica(1250, 640, 560, t) + I.billete(760, 520, 900, "1", "RENTENMARK", bc("rentenmark"), rot=-4))
+    if clave == "balanza":
+        izq = "".join(f'<ellipse cx="{-60 + i * 40}" cy="{-12 - (i % 2) * 18}" rx="40" ry="16" fill="#D4AF6A" stroke="#8A6A30" stroke-width="3"/>' for i in range(4))
+        return mesa("#5E4128") + I.bascula(960, 1000, t, izq, izq, 0) + txt(620, 380, "INGRESOS", 50, BLANCO, 900) + txt(1300, 380, "GASTOS", 50, BLANCO, 900)
+    if clave in ("forinto", "real", "moneda"):
+        nom = {"forinto": ("FORINT", "forinto"), "real": ("REAL", "real"), "moneda": ("NUEVA MONEDA", "rentenmark")}[clave]
+        return mesa("#5E4128") + f'<circle cx="960" cy="520" r="420" fill="#FFE9B0" opacity="0.25"/>' + I.billete(960, 520, 1200, "10", nom[0], bc(nom[1]), rot=-4 + math.sin(t))
+    if clave in ("banco", "banco_cerrado"):
+        s = I.calle("2010" if era == "2010" else "1980", t, base=900, lejos=True, densidad=1.3) + I.banco_central(360, 900, 1200, 600, t, bandera="#2A6FB6")
+        if clave == "banco_cerrado":
+            s += I.caja_texto(960, 560, "SIN CRÉDITO", 90, "#B3261E", "#FFFFFF", 0.95, "middle")
+        return s
+    if clave == "estano":
+        s = I.mina(t)
+        s += "".join(f'<path d="M{700 + (i % 4) * 130} {960 - (i // 4) * 50} l 120 0 l -20 -46 h -80 Z" fill="#B8BEC2" stroke="#6B7278" stroke-width="4"/>' for i in range(10))
+        return s + f'<path d="M1300 300 L 1500 500 L 1600 450 L 1800 760" stroke="{ROJO}" stroke-width="26" fill="none"/><path d="M1760 700 l 60 80 l -100 10 Z" fill="{ROJO}"/>'
+    if clave == "tijera":
+        return mesa("#5E4128") + I.documento(900, 540, 900, 820, "PRESUPUESTO", ["Gasto público", "1985"], 0) + I.tijera(1300, 600, 160, 2.0, abs(math.sin(t * 5)))
+    if clave in ("etiqueta", "etiqueta_control"):
+        s = pared("#E9E4D8", "#BFB8AA", 900) + I.estante(200, 860, 1520, 4, 31, 0.6 if clave == "etiqueta_control" else 0.0)
+        if clave == "etiqueta":
+            for i in range(5):
+                s += I.etiqueta_precio(300 + i * 280, 400 - 120 * ((t * 0.5 + i * 0.2) % 1), "$", 1.2, "#FFF6D6", -10 + i * 6)
+        else:
+            s += I.caja_texto(960, 300, "PRECIO REGULADO", 90, "#B3261E", "#FFFFFF", 0.95, "middle")
+        return s
+    if clave == "cambio":
+        return (I.calle("1980", t, base=900) + I.tienda(460, 900, 1000, 640, "CASA DE CAMBIO", "#2E5E4E", ("#F2B705", "#2E5E4E"), "1980")
+                + I.caja_texto(960, 640, "1 TASA ÚNICA", 80, "#0E1620", "#F2B705", 0.95, "middle"))
+    if clave == "urv":
+        return esc_urv({}, t, 6, {})
+    if clave == "campo":
+        return I.campo_seco(t)
+    if clave == "exportaciones":
+        s = I.cielo("2010", t) + '<rect y="760" width="1920" height="320" fill="#2E6E8E"/><rect y="700" width="760" height="70" fill="#8F8F8F"/>'
+        s += '<path d="M900 760 h 760 l -80 120 h -600 Z" fill="#3A3A3A"/>' + "".join(f'<rect x="{960 + i * 120}" y="680" width="110" height="80" fill="{c}"/>' for i, c in enumerate(("#E63946", "#2A9D8F", "#F4A261")))
+        return s + f'<path d="M300 200 L 700 500" stroke="{ROJO}" stroke-width="40"/><path d="M640 420 l 120 110 l -160 30 Z" fill="{ROJO}"/>'
+    if clave == "petroleo_cae":
+        s = I.cielo("2010", t, sol=(1600, 700)) + '<rect y="760" width="1920" height="320" fill="#8C6E4A"/>' + I.bomba_petroleo(900, 900, 0, 1.4)
+        return s + f'<path d="M1300 260 L 1500 460 L 1600 420 L 1800 700" stroke="{ROJO}" stroke-width="26" fill="none"/><path d="M1760 640 l 60 80 l -100 10 Z" fill="{ROJO}"/>'
+    if clave == "dolar":
+        s = mesa("#5E4128")
+        for i in range(5):
+            s += I.billete(600 + i * 180, 560 - abs(i - 2) * 40, 700, "1" if i % 2 else "20", "US DOLLARS", bc("dolar"), rot=-24 + i * 12)
+        return s
+    if clave == "ancla":
+        s = '<rect width="1920" height="1080" fill="#1F4E6B"/><rect y="560" width="1920" height="520" fill="#163A52"/>'
+        s += f'<g transform="translate(960 {f(560 + 10 * math.sin(t * 2))})"><circle cx="0" cy="-300" r="50" fill="none" stroke="#C9D1D6" stroke-width="26"/><path d="M0 -250 V 300 M -160 -150 H 160 M -330 120 Q 0 460 330 120" stroke="#C9D1D6" stroke-width="40" fill="none" stroke-linecap="round"/></g>'
+        return s
+    if clave == "confianza":
+        s = I.calle("1940", t, base=880, densidad=1.3) + I.banco_central(560, 880, 800, 460, t)
+        return s + I.multitud(0, 1920, 1060, 22, 66, t, "1940", filas=3, h=300, poses=["camina", "brazos", "camina"])
+    return pared("#333", "#222", 900)
 
 
-def paises(v, t, dur):
-    concl = v.get("conclusion")
-    s = [aparece(txt(960, 250, "7 PAÍSES · 1 PATRÓN" if concl else "7 PAÍSES · 7 HIPERINFLACIONES", 64, BLANCO, 900, extra='letter-spacing="4"'), t, 0.1, 0.45)]
-    paso = min(0.45, (dur * 0.6) / 7)
-    for i, (b, nom, an) in enumerate(PAISES):
-        fila = 0 if i < 4 else 1
-        cols = 4 if fila == 0 else 3
-        j = i if fila == 0 else i - 4
-        cx = 960 + (j - (cols - 1) / 2) * 400
-        cy = 430 + fila * 300
-        card = (f'<rect x="{cx - 175}" y="{cy - 120}" width="350" height="260" rx="24" fill="{PANEL}" stroke="{LINEA}" stroke-width="2"/>'
-                + bandera(b, cx - 110, cy - 90, 220, 140)
-                + txt(cx, cy + 92, nom, 40, BLANCO, 800) + txt(cx + 0, cy + 128, an, 30, ORO, 800))
-        s.append(aparece(card, t, 0.4 + i * paso, 0.45, cx=cx, cy=cy, escala=True))
-    return "".join(s)
-
-
-def suscribete(v, t, dur):
-    s = [aparece(txt(500, 380, "¿Qué país", 84, BLANCO, 900), t, 0.2, 0.45),
-         aparece(txt(500, 480, "analizamos", 84, BLANCO, 900), t, 0.35, 0.45),
-         aparece(txt(500, 580, "a fondo?", 84, ORO, 900), t, 0.5, 0.45),
-         aparece(txt(500, 680, "Déjalo en los comentarios", 40, GRIS, 600), t, 0.9, 0.45)]
-    s.append(f'<g transform="translate(180 40) scale(0.9)">{A.suscribete_a(t)}</g>')
-    return "".join(s)
-
-
-# ---------------------------------------------------------------- escena
-def acento_de(v):
-    tipo = v["tipo"]
-    if tipo == "capitulo":
-        return ORO
-    if tipo == "lista":
-        return ROJO if v.get("modo") == "causa" else VERDE
-    if tipo in ("numero", "grafica"):
-        return COLOR.get(v.get("color", "dorado"), ORO)
-    if tipo == "ceros":
-        return VERDE
-    return TURQ
-
-
-def escena(idx, texto_narr, v, t, dur, ctx):
-    acento = ctx["acento"]
-    s = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">', fondo(ctx["tg"], acento)]
-    tipo = v["tipo"]
-    k = 1 + 0.035 * (t / max(dur, 1))
-    cuerpo = {"precio_ticker": precio_ticker, "numero": numero, "lista": lista, "grafica": grafica, "barras": barras,
-              "ceros": ceros, "billete": billete, "tiempo": tiempo, "texto": texto, "paises": paises, "suscribete": suscribete}
-    if tipo == "capitulo":
-        c = capitulo(v, t, dur, acento)
+def esc_paneles(v, t, dur, ctx):
+    era = v.get("era", "1980")
+    items = v["items"]
+    ya = v.get("ya", 0)
+    n = len(items)
+    nuevos = n - ya
+    oscuro = {"1920": "#2A2118", "1940": "#24231F", "1980": "#1E2430", "2010": "#14202B"}[era]
+    s = [f'<rect width="1920" height="1080" fill="{oscuro}"/>',
+         '<radialGradient id="pg" cx="0.5" cy="0.45" r="0.7"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.08"/><stop offset="1" stop-color="#000" stop-opacity="0.4"/></radialGradient>',
+         '<rect width="1920" height="1080" fill="url(#pg)"/>']
+    modo_rojo = any(k in ("guerra", "deuda", "deuda_ext", "banco_cerrado", "estano", "campo", "exportaciones", "imprenta", "etiqueta_control", "petroleo_cae", "confianza") for k, _ in items)
+    col = ROJO if modo_rojo else VERDE
+    if n == 1:
+        pw, ph = 980, 551
+    elif n == 2:
+        pw, ph = 860, 484
+    elif n == 3:
+        pw, ph = 580, 326
     else:
-        c = cuerpo[tipo](v, t, dur)
-    s.append(f'<g transform="translate(960 520) scale({k:.4f}) translate(-960 -520)">{c}</g>')
-    s.append(capa_superior(ctx, t))
-    s.append(subtitulos(texto_narr, t, ctx["vdur"]))
-    s.append(transicion(t, ORO if tipo == "capitulo" else acento))
+        pw, ph = 430, 242
+    gap = 30
+    x0 = 960 - (n * pw + (n - 1) * gap) / 2
+    y0 = min(520 - ph / 2 - (40 if n >= 3 else 20), 860 - ph - 106)
+    y0 = max(y0, 200 if v.get("titulo") else 130)
+    if v.get("titulo"):
+        s.append(txt(960, 140, v["titulo"].upper(), 54, col, 900, extra='letter-spacing="10"'))
+    paso = min(1.6, (dur * 0.75 - 0.3) / max(1, nuevos))
+    for j, (clave, cap) in enumerate(items):
+        st = -1 if j < ya else 0.3 + (j - ya) * paso
+        p = 1.0 if j < ya else ease_out(prog(t, st, 0.55))
+        if p <= 0:
+            continue
+        x = x0 + j * (pw + gap)
+        k = pw / 1920
+        dy = 60 * (1 - p)
+        cid = f"pn{j}"
+        contenido = mini(clave, t, era)
+        s.append(f'<g opacity="{f(p)}" transform="translate(0 {f(dy)})">'
+                 f'<rect x="{f(x + 10)}" y="{f(y0 + 14)}" width="{pw}" height="{f(ph + 110)}" rx="14" fill="#000" opacity="0.4"/>'
+                 f'<clipPath id="{cid}"><rect x="{f(x)}" y="{f(y0)}" width="{pw}" height="{f(ph)}" rx="14"/></clipPath>'
+                 f'<g clip-path="url(#{cid})"><g transform="translate({f(x)} {f(y0)}) scale({k:.4f})">{contenido}</g></g>'
+                 f'<rect x="{f(x)}" y="{f(y0)}" width="{pw}" height="{f(ph)}" rx="14" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="3"/>'
+                 f'<rect x="{f(x)}" y="{f(y0 + ph + 14)}" width="{pw}" height="92" rx="14" fill="#0E1620"/>'
+                 f'<rect x="{f(x)}" y="{f(y0 + ph + 14)}" width="10" height="92" rx="5" fill="{col}"/>')
+        fs = min(40, (pw - 60) / max(1, len(cap) * 0.56))
+        s.append(txt(x + pw / 2 + 5, y0 + ph + 14 + 46 + fs * 0.35, cap, fs, BLANCO, 800) + '</g>')
+    return "".join(s)
+
+
+ESC = {k[4:]: fn for k, fn in globals().items() if k.startswith("esc_") and callable(fn)}
+ERA_PAIS = {"DEU": "1920", "HUN": "1940", "BOL": "1980", "ARG": "1980", "BRA": "1980", "ZWE": "2010", "VEN": "2010"}
+SEPIA = {"1920": ("#8A6A3A", 0.13), "1940": ("#5A5040", 0.12)}
+
+
+# ---------------------------------------------------------------- composición
+def contenido(v, t, dur, ctx):
+    return ESC[v["vis"]](v, t, dur, ctx)
+
+
+def escena(idx, texto_n, v, t, dur, ctx):
+    s = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">', V1.DEFS]
+    mapa_vis = v["vis"] in ("capitulo", "mapa", "mapa_hiper", "mapa_siete", "migracion")
+    k = 1.0 if mapa_vis else 1 + 0.045 * (t / max(dur, 1))
+    cuerpo = contenido(v, t, dur, ctx)
+    if k != 1.0:
+        cuerpo = f'<g transform="translate(960 500) scale({k:.4f}) translate(-960 -500)">{cuerpo}</g>'
+    if ctx.get("prev") and t < 0.45:
+        pv, pd = ctx["prev"]
+        kp = 1.0 if pv["vis"] in ("capitulo", "mapa", "mapa_hiper", "mapa_siete", "migracion") else 1.045
+        prev = contenido(pv, pd - 0.04, pd, ctx)
+        if kp != 1.0:
+            prev = f'<g transform="translate(960 500) scale({kp:.4f}) translate(-960 -500)">{prev}</g>'
+        s.append(prev)
+        s.append(f'<g opacity="{f(ease_io(t / 0.45))}">{cuerpo}</g>')
+    else:
+        s.append(cuerpo)
+    sep = SEPIA.get(ctx.get("era"))
+    if sep and not mapa_vis:
+        s.append(f'<rect width="1920" height="1080" fill="{sep[0]}" opacity="{sep[1]}"/>')
+    s.append('<rect width="1920" height="1080" fill="url(#vin)" opacity="0.7"/>')
+    if v.get("dato"):
+        s.append(dato(v["dato"], t, 0.7, "der"))
+    s.append(capa(ctx))
+    s.append(V1.subtitulos(texto_n, t, ctx["vdur"]))
     s.append('</svg>')
     return "".join(s)
 
 
+def capa(ctx):
+    s = [f'<rect x="0" y="0" width="1920" height="6" fill="#000" opacity="0.3"/><rect x="0" y="0" width="{f(1920 * ctx["tg"] / ctx["total"])}" height="6" fill="{ORO}"/>']
+    lab = ctx["etiqueta"]
+    w = V1.ancho_txt(lab, 24, 700) + len(lab) * 2 + 66
+    s.append(f'<g transform="translate(50 36)"><rect width="{f(w)}" height="48" rx="24" fill="#0E1620" opacity="0.8"/>'
+             f'<circle cx="26" cy="24" r="7" fill="{ORO}"/>' + txt(44, 33, lab, 24, BLANCO, 700, "start", extra='letter-spacing="2"') + '</g>')
+    return "".join(s)
+
+
 def contextos():
-    """Etiqueta de capítulo y acento por escena."""
-    out, lab = [], "INTRODUCCIÓN"
+    out, lab, era = [], "INTRODUCCIÓN", "2010"
+    prev = None
     for texto_n, v in GU.E:
-        if v["tipo"] == "capitulo":
+        if v["vis"] == "capitulo":
             lab = f'CAP. {v["num"]:02d} · {v["pais"]} {v["anio"]}'
-        if v["tipo"] == "paises" and v.get("conclusion"):
-            lab = "CONCLUSIÓN"
-        out.append({"etiqueta": lab, "acento": acento_de(v)})
+            era = ERA_PAIS[v["iso"]]
+        if v["vis"] == "mapa_siete" and v.get("conclusion"):
+            lab, era = "CONCLUSIÓN", "2010"
+        out.append({"etiqueta": lab, "era": era, "prev_v": prev})
+        prev = v
     return out
 
 
 # ---------------------------------------------------------------- audio
-def generar_voces(tts_dir, textos, tmp):
-    import sherpa_onnx
-    k = os.path.join(tts_dir, "kokoro-multi-lang-v1_0")
-    kok = sherpa_onnx.OfflineTts(sherpa_onnx.OfflineTtsConfig(model=sherpa_onnx.OfflineTtsModelConfig(kokoro=sherpa_onnx.OfflineTtsKokoroModelConfig(
-        model=f"{k}/model.onnx", voices=f"{k}/voices.bin", tokens=f"{k}/tokens.txt", data_dir=f"{k}/espeak-ng-data",
-        dict_dir=f"{k}/dict", lexicon=f"{k}/lexicon-us-en.txt,{k}/lexicon-zh.txt", lang="es"), num_threads=4)))
-    voces = []
-    for n, texto_n in enumerate(textos):
-        a = kok.generate(texto_n, sid=VOZ_SID, speed=VOZ_VEL)
-        y = np.array(a.samples, dtype=np.float32)
-        ruta = os.path.join(tmp, f"v{n}")
-        sf.write(ruta + ".in.wav", y, a.sample_rate)
-        filtros = (f"asetrate={int(a.sample_rate * VOZ_TONO)},aresample={SR},atempo={1 / VOZ_TONO:.5f},"
-                   "highpass=f=70,equalizer=f=180:t=q:w=1:g=2,acompressor=threshold=-18dB:ratio=3:attack=5:release=80")
-        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", ruta + ".in.wav", "-af", filtros, "-ac", "1", ruta + ".out.wav"], check=True)
-        z, _ = sf.read(ruta + ".out.wav")
-        os.remove(ruta + ".in.wav")
-        os.remove(ruta + ".out.wav")
-        voces.append(np.concatenate([np.zeros(int(SR * 0.12)), z, np.zeros(int(SR * 0.45))]))
-        if n % 10 == 0:
-            print(f"voz {n}/{len(textos)}", flush=True)
-    return voces
-
-
-def musica_doc(total):
-    """Colchón cinematográfico: pads lentos Am-F-C-G + pulso grave suave."""
-    n = int(SR * total) + SR
-    tt = np.arange(n) / SR
-    acordes = [(220.0, 261.63, 329.63), (174.61, 220.0, 261.63), (130.81, 164.81, 196.0), (196.0, 246.94, 293.66)]
-    bajos = [55.0, 43.65, 65.41, 49.0]
-    dur_ac = 8.0
-    out = np.zeros(n)
-    rng = np.random.default_rng(7)
-    for ci in range(int(total / dur_ac) + 2):
-        a0 = int(ci * dur_ac * SR)
-        a1 = min(n, a0 + int((dur_ac + 2.5) * SR))
-        if a0 >= n:
-            break
-        seg = tt[a0:a1] - ci * dur_ac
-        env = np.minimum(1, seg / 2.5) * np.minimum(1, np.maximum(0, (dur_ac + 2.5 - seg) / 2.5))
-        notas, bajo = acordes[ci % 4], bajos[ci % 4]
-        sig = np.zeros_like(seg)
-        for fr in notas:
-            for det in (-0.6, 0.0, 0.7):
-                ph = rng.uniform(0, 2 * np.pi)
-                sig += 0.5 * np.sin(2 * np.pi * (fr + det) * seg + ph) + 0.18 * np.sin(4 * np.pi * (fr + det) * seg + ph)
-        sig += 1.2 * np.sin(2 * np.pi * bajo * seg)
-        out[a0:a1] += sig * env * 0.06
-    # pulso tipo latido cada 1 s
-    pulso = np.zeros(n)
-    golpe = np.sin(2 * np.pi * 52 * np.arange(int(0.25 * SR)) / SR) * np.exp(-np.arange(int(0.25 * SR)) / (0.06 * SR))
-    for b in np.arange(0, total, 1.0):
-        i0 = int(b * SR)
-        g = golpe * (1.0 if int(b) % 2 == 0 else 0.6)
-        pulso[i0:i0 + len(g)] += g[:n - i0]
-    out += pulso * 0.12
-    # brillo: arpegio suave de campanita cada 2 s
-    for b in np.arange(0, total, 2.0):
-        ci = int(b / dur_ac) % 4
-        fr = acordes[ci][int(b / 2) % 3] * 2
-        i0 = int(b * SR)
-        m = min(int(1.6 * SR), n - i0)
-        e = np.arange(m) / SR
-        out[i0:i0 + m] += 0.035 * np.sin(2 * np.pi * fr * e) * np.exp(-e / 0.5)
-    try:
-        from scipy.signal import lfilter
-        out = lfilter([0.25], [1, -0.75], out)
-    except ImportError:
-        pass
-    return out[:int(SR * total)] / (np.abs(out).max() + 1e-9)
-
-
-def sfx_riser(d=0.9):
-    m = int(d * SR)
-    e = np.arange(m) / SR
-    ruido = np.random.default_rng(3).normal(0, 1, m)
-    fr = 200 + 1600 * (e / d) ** 2
-    return (0.25 * ruido * (e / d) ** 2 + 0.3 * np.sin(2 * np.pi * np.cumsum(fr) / SR) * (e / d)) * 0.5
-
-
 def eventos(v, dur):
-    tipo = v["tipo"]
-    ev = [(0.0, "whoosh", 0.55)]
-    if tipo == "capitulo":
-        ev += [(0.3, "boom", 0.9), (0.9, "swoosh", 0.5)]
-    elif tipo == "numero":
-        if v.get("contar", True) and _partir_numero(v["valor"]):
-            d = min(1.8, dur * 0.4)
-            ev += [(0.3 + k * d / 14, "tick", 0.45) for k in range(14)] + [(0.3 + d, "ding", 0.5)]
-        else:
-            ev.append((0.3, "boom", 0.6))
-    elif tipo == "lista":
+    vis = v["vis"]
+    ev = [(0.0, "whoosh", 0.45)]
+    if v.get("dato"):
+        ev.append((0.7, "pop", 0.5))
+    if vis == "capitulo":
+        dv = min(2.6, dur * 0.65)
+        ev += [(0.1, "swoosh", 0.6), (dv * 0.55, "boom", 0.8), (dv + 0.2, "pop", 0.5)]
+    elif vis == "paneles":
         ya = v.get("ya", 0)
         nuevos = len(v["items"]) - ya
-        paso = min(1.6, (dur * 0.75 - 0.4) / max(1, nuevos))
-        ev += [(0.4 + j * paso, "pop", 0.55) for j in range(nuevos)]
-    elif tipo == "grafica":
-        d = max(1.2, dur * 0.55)
-        ev += [(0.5, "swoosh", 0.5), (0.5 + d, "ding", 0.5)]
-    elif tipo == "barras":
-        ev += [(0.5 + i * min(1.3, dur * 0.6 / len(v["items"])), "swoosh", 0.45) for i in range(len(v["items"]))]
-    elif tipo == "ceros":
-        fin = max(1.6, dur * 0.62)
+        paso = min(1.6, (dur * 0.75 - 0.3) / max(1, nuevos))
+        ev += [(0.3 + j * paso, "swoosh", 0.5) for j in range(nuevos)]
+    elif vis == "ceros":
+        fin = max(1.8, dur * 0.6)
         n = v.get("quitar", 0)
-        if n:
-            ev += [(1.0 + k * (fin - 1.0) / n, "tick", 0.5) for k in range(n)]
-            ev.append((fin + 0.6, "ding", 0.6))
-        else:
-            ev.append((1.2, "ding", 0.6))
-    elif tipo == "billete":
-        ev += [(0.2, "swoosh", 0.6), (1.0, "pop", 0.5)]
-    elif tipo == "tiempo":
-        n = len(v["eventos"])
-        for i in range(n):
-            frac = (lerp(120, 1360, i / (n - 1) if n > 1 else 0.5)) / 1480
-            ev.append((0.1 + frac * max(1.0, dur * 0.65), "pop", 0.5))
-    elif tipo == "texto":
-        ev.append((0.6, "pop", 0.45))
-    elif tipo == "paises":
-        paso = min(0.45, (dur * 0.6) / 7)
-        ev += [(0.4 + i * paso, "pop", 0.45) for i in range(7)]
-    elif tipo == "suscribete":
+        ev += [(1.0 + kk * (fin - 1.0) / max(1, n), "tick", 0.45) for kk in range(n)] + [(fin + 0.3, "ding", 0.6)]
+    elif vis in ("billete", "nuevo_billete", "montana_vs"):
+        ev += [(0.2, "swoosh", 0.5), (1.0, "ding", 0.4)]
+        if vis == "nuevo_billete":
+            ev.append((1.8, "boom", 0.6))
+    elif vis == "periodicos":
+        paso = (dur * 0.7) / len(v["eventos"])
+        ev += [(0.3 + i * paso, "swoosh", 0.5) for i in range(len(v["eventos"]))]
+    elif vis == "panaderia":
+        paso = (dur - 1.4) / 6
+        ev += [(0.6 + i * paso, "ding", 0.35) for i in range(7)]
+    elif vis in ("imprenta", "huelga_imprenta"):
+        ev += [(0.2 + kk * 0.5, "vibra", 0.25) for kk in range(int(dur / 0.5))]
+    elif vis == "reloj":
+        ev += [(0.5 + kk * 0.25, "tick", 0.35) for kk in range(int((dur - 0.5) / 0.25))]
+    elif vis == "remarcar":
+        ev += [(0.6 + kk * (dur - 1.2) / 12, "click", 0.4) for kk in range(12)]
+    elif vis == "decreto":
+        ev += [(2.6, "boom", 0.7)]
+    elif vis == "hielo":
+        ev += [(dur - 1.0, "boom", 0.7)]
+    elif vis == "migracion":
+        ev += [(0.6 + i * 0.45, "swoosh", 0.4) for i in range(6)]
+    elif vis == "mapa_siete":
+        paso = 0.15 if v.get("conclusion") else min(0.6, dur * 0.7 / 7)
+        ev += [(0.3 + i * paso, "pop", 0.45) for i in range(7)]
+    elif vis == "billetes_serie":
+        paso = (dur * 0.75) / len(v["items"])
+        ev += [(0.3 + i * paso, "swoosh", 0.5) for i in range(len(v["items"]))]
+    elif vis == "suscribete":
         ev += [(0.3, "pop", 0.6), (1.75, "click", 0.8), (2.0, "campana", 0.7)]
+    elif vis == "mapa":
+        ev += [(1.0 + i * 0.6, "swoosh", 0.45) for i in range(len(v.get("flechas", [])))]
     return ev
 
 
@@ -946,41 +973,38 @@ def _cuadro(args):
     return subprocess.run(["rsvg-convert", "-w", str(W), "-h", str(H), "-f", "png"], input=svg, capture_output=True, check=True).stdout
 
 
-def muestra(salida_dir):
-    """Hoja de contacto: un cuadro representativo de cada tipo de escena."""
-    os.makedirs(salida_dir, exist_ok=True)
+def muestra(carpeta, indices=None, tiempos=(0.2, 3.5)):
+    os.makedirs(carpeta, exist_ok=True)
     ctxs = contextos()
-    vistos = {}
     for i, (texto_n, v) in enumerate(GU.E):
-        clave = v["tipo"] + ("_e" if v.get("etapas") else "") + ("_y" if v.get("ya") else "")
-        if clave in vistos:
+        if indices and i not in indices:
             continue
-        vistos[clave] = i
-        dur = 7.0
-        for t in (0.25, 5.5):
+        for t in tiempos:
             ctx = dict(ctxs[i], tg=i * 7 + t, total=len(GU.E) * 7, vdur=6.5)
-            png = _cuadro((i, texto_n, v, t, dur, ctx))
-            with open(os.path.join(salida_dir, f"{i:02d}_{clave}_{t}.png"), "wb") as fh:
+            ctx["prev"] = (ctxs[i]["prev_v"], 7.0) if ctxs[i]["prev_v"] else None
+            png = _cuadro((i, texto_n, v, t, 7.0, ctx))
+            with open(os.path.join(carpeta, f"{i:02d}_{v['vis']}_{t}.png"), "wb") as fh:
                 fh.write(png)
-    print("muestras:", len(vistos))
+    print("ok")
 
 
 def main():
-    if "--muestra" in sys.argv:
-        muestra(sys.argv[2])
+    if sys.argv[1] == "--muestra":
+        idx = [int(x) for x in sys.argv[3].split(",")] if len(sys.argv) > 3 else None
+        muestra(sys.argv[2], idx)
         return
     tts_dir, salida = sys.argv[1], sys.argv[2]
-    fps = int(sys.argv[3]) if len(sys.argv) > 3 and sys.argv[3].isdigit() else 24
+    fps = int(sys.argv[3]) if len(sys.argv) > 3 else 24
     escenas = GU.E
     tmp = salida + "_tmp"
     os.makedirs(tmp, exist_ok=True)
-    voces = generar_voces(tts_dir, [x for x, _ in escenas], tmp)
-    durs = [max(len(v) / SR, 3.0) for v in voces]
-    vdurs = [len(v) / SR - 0.45 for v in voces]
+    voces = V1.generar_voces(tts_dir, [x for x, _ in escenas], tmp)
+    durs = [max(len(vz) / SR, 3.2) for vz in voces]
+    vdurs = [len(vz) / SR - 0.45 for vz in voces]
     total = sum(durs)
     print(f"{len(escenas)} escenas · {total:.1f} s", flush=True)
     A.cargar_sfx()
-    A.SFX["riser"] = sfx_riser()
+    A.SFX.update(vibra=CA.sfx_vibra(), riser=V1.sfx_riser())
     voz = np.zeros(int(SR * (total + 1)))
     efectos = np.zeros_like(voz)
     t0 = 0.0
@@ -988,8 +1012,8 @@ def main():
         i0 = int(SR * t0)
         voz[i0:i0 + len(vz)] += vz
         evs = eventos(v, d)
-        if v["tipo"] == "capitulo" and t0 > 1:
-            evs.append((-0.9, "riser", 0.6))
+        if v["vis"] == "capitulo" and t0 > 1:
+            evs.append((-0.9, "riser", 0.55))
         for ts, nombre, vol in evs:
             snd = A.SFX[nombre] * vol * 0.5
             j = i0 + int(SR * ts)
@@ -997,22 +1021,27 @@ def main():
                 efectos[j:j + len(snd)] += snd[:len(efectos) - j]
         t0 += d
     pista = voz + efectos
-    pista[:int(SR * total)] += musica_doc(total) * 0.11
+    pista[:int(SR * total)] += V1.musica_doc(total) * 0.11
     pista = pista[:int(SR * total)]
     pista /= max(1.0, np.abs(pista).max() / 0.95)
     wav = salida + ".wav"
     sf.write(wav, pista.astype(np.float32), SR)
     ctxs = contextos()
     tareas, tg = [], 0.0
-    for k, ((texto_n, v), d, vd) in enumerate(zip(escenas, durs, vdurs)):
+    prev_d = None
+    for kk, ((texto_n, v), d, vd) in enumerate(zip(escenas, durs, vdurs)):
         for fi in range(int(round(d * fps))):
             t = fi / fps
-            tareas.append((k, texto_n, v, t, d, dict(ctxs[k], tg=tg + t, total=total, vdur=vd)))
+            ctx = dict(ctxs[kk], tg=tg + t, total=total, vdur=vd)
+            ctx["prev"] = (ctxs[kk]["prev_v"], prev_d) if ctxs[kk]["prev_v"] else None
+            tareas.append((kk, texto_n, v, t, d, ctx))
         tg += d
+        prev_d = d
     print(f"{len(tareas)} cuadros", flush=True)
     ff = subprocess.Popen(["ffmpeg", "-loglevel", "error", "-y", "-f", "image2pipe", "-framerate", str(fps), "-i", "-", "-i", wav,
-                           "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k",
-                           "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-shortest", "-movflags", "+faststart", salida], stdin=subprocess.PIPE)
+                           "-vf", "noise=c0s=5:c0f=t+u", "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-pix_fmt", "yuv420p",
+                           "-c:a", "aac", "-b:a", "192k", "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-shortest", "-movflags", "+faststart", salida],
+                          stdin=subprocess.PIPE)
     with Pool(4) as pool:
         for n, png in enumerate(pool.imap(_cuadro, tareas, chunksize=4)):
             ff.stdin.write(png)
