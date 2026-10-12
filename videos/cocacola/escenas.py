@@ -155,7 +155,7 @@ def brazos_pose(pose, t):
     return [L0, a[0], a[1]], [R0, a[2], a[3]], a[3], None
 
 
-def byron(x, gy=GY, t=0.0, pose="normal", panza=0, ojos="normal", boca="sonrisa", sudor=False, tiembla=False, mira=1, k=0.95):
+def byron(x, gy=GY, t=0.0, pose="normal", panza=0, ojos="normal", boca="sonrisa", sudor=False, tiembla=False, mira=1, k=0.95, objeto=None):
     dy = 6 * math.sin(2 * math.pi * 1.2 * t)
     dx = 0.0
     if pose == "celebra":
@@ -248,6 +248,8 @@ def byron(x, gy=GY, t=0.0, pose="normal", panza=0, ojos="normal", boca="sonrisa"
             s.append(f'<g transform="translate({f(mano_r[0])} {f(mano_r[1] - 40)}) rotate({f(-inclin)})"><rect x="-26" y="-80" width="52" height="150" rx="16" fill="#B3E5FC" stroke="{INK}" stroke-width="5"/>'
                      f'<rect x="-14" y="-102" width="28" height="24" rx="5" fill="#1E88E5" stroke="{INK}" stroke-width="4"/>'
                      '<rect x="-26" y="-20" width="52" height="40" fill="#4FC3F7"/></g>')
+        elif objeto is not None:
+            s.append(objeto(mano_r[0], mano_r[1] - 40, 1.0, -inclin))
         else:
             s.append(lata(mano_r[0], mano_r[1] - 40, 1.0, -inclin))
     if sudor:
