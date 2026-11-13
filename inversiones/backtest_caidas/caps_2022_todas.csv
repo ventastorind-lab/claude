@@ -1,0 +1,506 @@
+ticker_2022,ticker_yahoo,cap_2022,detalle,empresa
+MMM,MMM,101639914409.01381,"cierre 177.74 × 571,846,016 acc. (2022-01-27)",3M
+ABT,ABT,246960050825.6836,"cierre 139.04 × 1,776,179,968 acc. (2022-01-26)",Abbott Laboratories
+ABBV,ABBV,239406297696.03516,"cierre 135.42 × 1,767,879,936 acc. (2022-02-11)",AbbVie
+ABMD,ABMD,,sin precios (Yahoo no tiene el histórico),Abiomed
+ACN,ACN,257563981227.58008,"cierre 407.21 × 632,508,992 acc. (2021-12-20)",Accenture
+ATVI,ATVI,,sin precios (Yahoo no tiene el histórico),Activision Blizzard
+ADBE,ADBE,266213326696.77734,"cierre 564.37 × 471,700,000 acc. (2022-01-25)",Adobe
+AMD,AMD,185480301181.64062,"cierre 150.24 × 1,234,560,000 acc. (2022-02-04)",Advanced Micro Devices
+AAP,AAP,14764464179.882812,"cierre 236.78 × 62,355,200 acc. (2022-02-11)",Advance Auto Parts
+AES,AES,16665338896.40857,"cierre 24.38 × 683,566,016 acc. (2022-02-04)",AES Corp
+AFL,AFL,38547236862.82349,"cierre 58.27 × 661,528,000 acc. (2021-12-04)",Aflac
+A,A,47257113937.87256,"cierre 156.48 × 302,000,992 acc. (2021-12-21)",Agilent Technologies
+APD,APD,65576343498.7793,"cierre 295.81 × 221,684,000 acc. (2021-12-20)",Air Products & Chemicals
+AKAM,AKAM,19093025147.094727,"cierre 117.51 × 162,480,000 acc. (2022-02-11)",Akamai Technologies
+ALK,ALK,6807737381.576538,"cierre 54.07 × 125,906,000 acc. (2022-01-29)",Alaska Air Group
+ALB,ALB,28512581359.405518,"cierre 236.67 × 120,474,000 acc. (2022-02-04)",Albemarle Corporation
+ARE,ARE,35143782732.72705,"cierre 219.83 × 159,868,000 acc. (2022-01-06)",Alexandria Real Estate Equities
+ALGN,ALGN,51100753084.637695,"cierre 648.05 × 78,853,104 acc. (2022-02-11)",Align Technology
+ALLE,ALLE,11603062196.186035,"cierre 129.36 × 89,695,904 acc. (2022-02-11)",Allegion
+LNT,LNT,15234465981.179443,"cierre 60.85 × 250,360,992 acc. (2022-02-11)",Alliant Energy
+ALL,ALL,33185970654.22119,"cierre 118.27 × 280,595,008 acc. (2022-02-04)",Allstate Corp
+GOOGL,GOOGL,1925330494129.4531,"cierre 2899.83 × 663,945,984 acc. (2022-01-04)",Alphabet (Class A)
+GOOG,GOOG,1925330072281.9922,"cierre 2901.49 × 663,566,016 acc. (2022-01-04)",Alphabet (Class C)
+MO,MO,87457948360.60156,"cierre 47.97 × 1,823,180,032 acc. (2022-01-31)",Altria Group
+AMZN,AMZN,1734186099510.498,"cierre 3408.09 × 508,844,000 acc. (2022-02-06)",Amazon
+AMCR,AMCR,17983113432.193752,"cierre 11.88 × 1,513,730,048 acc. (2022-02-07)",Amcor
+AEE,AEE,22818739951.690674,"cierre 88.58 × 257,606,000 acc. (2022-02-11)",Ameren Corp
+AAL,AAL,12144900000.0,"cierre 18.75 × 647,728,000 acc. (2022-01-25)",American Airlines Group
+AEP,AEP,43985119620.73242,"cierre 88.61 × 496,390,016 acc. (2021-11-26)",American Electric Power
+AXP,AXP,128007815109.25293,"cierre 168.21 × 761,000,000 acc. (2022-01-27)",American Express
+AIG,AIG,47650800794.98633,"cierre 57.39 × 830,297,984 acc. (2021-12-11)",American International Group
+AMT,AMT,130421468125.78125,"cierre 286.38 × 455,414,016 acc. (2022-02-11)",American Tower
+AWK,AWK,33428407209.197998,"cierre 184.14 × 181,538,000 acc. (2022-02-12)",American Water Works
+AMP,AMP,33742435083.007812,"cierre 304.26 × 110,900,000 acc. (2022-01-28)",Ameriprise Financial
+ABC,COR,5861193732.202148,"cierre 132.62 × 44,195,400 acc. (2021-12-03)",AmerisourceBergen
+AME,AME,33234461177.07129,"cierre 143.67 × 231,324,992 acc. (2022-02-11)",Ametek
+AMGN,AMGN,130473697805.17578,"cierre 226.69 × 575,560,000 acc. (2022-02-04)",Amgen
+APH,APH,52303524576.0,"cierre 86.50 × 604,665,024 acc. (2022-01-04)",Amphenol
+ADI,ADI,93062384860.83398,"cierre 177.15 × 525,331,008 acc. (2021-12-07)",Analog Devices
+ANSS,ANSS,,sin precios (Yahoo no tiene el histórico),Ansys
+ANTM,ELV,112070765849.60156,"cierre 464.86 × 241,084,992 acc. (2022-06-29, get_shares_full)",Anthem
+AON,AON,65108075031.73828,"cierre 293.24 × 222,030,000 acc. (2022-02-04)",Aon
+AOS,AOS,13301168291.427612,"cierre 83.57 × 159,162,000 acc. (2022-02-11)",A. O. Smith
+APA,APA,10193467797.030762,"cierre 28.06 × 363,273,984 acc. (2021-12-31)",APA Corporation
+AAPL,AAPL,2973023961083.3438,"cierre 182.01 × 16,334,399,488 acc. (2022-01-10)",Apple
+AMAT,AMAT,142099881420.65625,"cierre 159.93 × 888,513,024 acc. (2021-12-21)",Applied Materials
+APTV,APTV,44913436433.302734,"cierre 166.03 × 270,513,984 acc. (2021-12-05)",Aptiv
+ADM,ADM,37987984938.47656,"cierre 67.89 × 559,552,000 acc. (2022-01-27)",ADM
+ANET,ANET,43710353688.04932,"cierre 142.24 × 307,300,000 acc. (2021-11-23)",Arista Networks
+AJG,AJG,34751367739.53247,"cierre 166.71 × 208,454,000 acc. (2022-01-29)",Arthur J. Gallagher & Co.
+AIZ,AIZ,8973554963.339233,"cierre 156.27 × 57,423,400 acc. (2022-02-04)",Assurant
+T,T,181595640494.1553,"cierre 25.43 × 7,141,000,192 acc. (2022-02-11)",AT&T
+ATO,ATO,13935352333.488464,"cierre 105.01 × 132,705,000 acc. (2021-12-21)",Atmos Energy
+ADSK,ADSK,62410737558.76172,"cierre 283.72 × 219,972,992 acc. (2021-12-07)",Autodesk
+ADP,ADP,102581801690.67383,"cierre 244.01 × 420,400,000 acc. (2022-01-28)",Automatic Data Processing
+AZO,AZO,42199617481.73828,"cierre 2045.11 × 20,634,400 acc. (2021-12-21)",AutoZone
+AVB,AVB,,sin precios (Yahoo no tiene el histórico),AvalonBay Communities
+AVY,AVY,17454140233.862305,"cierre 210.81 × 82,795,600 acc. (2021-12-05)",Avery Dennison
+BKR,BKR,23038453081.705566,"cierre 25.04 × 920,065,984 acc. (2022-02-09)",Baker Hughes
+BLL,BALL,29823522077.06299,"cierre 93.26 × 319,788,992 acc. (2022-05-10, get_shares_full)",Ball Corp
+BAC,BAC,373034198515.0781,"cierre 46.18 × 8,077,830,144 acc. (2022-01-25)",Bank of America
+BBWI,BBWI,17942676524.817383,"cierre 69.62 × 257,723,008 acc. (2021-12-07)",Bath & Body Works
+BAX,BAX,43495201590.234375,"cierre 86.87 × 500,692,992 acc. (2022-02-11)",Baxter International
+BDX,BDX,72175737814.86337,"cierre 253.21 × 285,043,008 acc. (2021-12-21)",Becton Dickinson
+BRK.B,BRK.B,673128960485.625,"cierre 300.79 × 2,237,870,080 acc. (2022-01-01)",Berkshire Hathaway
+BBY,BBY,24566089163.760498,"cierre 102.12 × 240,560,992 acc. (2021-12-07)",Best Buy
+BIO,BIO,22000309414.752197,"cierre 735.42 × 29,915,300 acc. (2022-01-04)",Bio-Rad Laboratories
+TECH,TECH,19167854722.77527,"cierre 487.79 × 39,295,300 acc. (2021-12-04)",Bio-Techne
+BIIB,BIIB,35879548683.4209,"cierre 244.14 × 146,963,008 acc. (2022-02-06)",Biogen
+BLK,BLK,138507276149.03125,"cierre 911.73 × 151,916,992 acc. (2022-01-18)",BlackRock
+BK,BK,,sin precios (Yahoo no tiene el histórico),BNY Mellon
+BA,BA,122412286316.5664,"cierre 207.86 × 588,916,992 acc. (2022-01-28)",Boeing
+BKNG,BKNG,101218023390.57922,"cierre 2461.42 × 41,121,800 acc. (2022-02-04)",Booking Holdings
+BWA,BWA,10832853878.019703,"cierre 45.18 × 239,771,008 acc. (2022-02-12)",BorgWarner
+BXP,BXP,18776006722.66992,"cierre 119.94 × 156,544,992 acc. (2022-01-28)",Boston Properties
+BSX,BSX,61445565208.18652,"cierre 43.12 × 1,424,989,952 acc. (2022-02-12)",Boston Scientific
+BMY,BMY,139392129986.21777,"cierre 61.88 × 2,252,620,032 acc. (2022-01-25)",Bristol Myers Squibb
+AVGO,AVGO,273867574090.85938,"cierre 663.32 × 412,873,984 acc. (2021-12-21)",Broadcom
+BR,BR,21130073993.637085,"cierre 180.95 × 116,773,000 acc. (2022-02-02)",Broadridge Financial Solutions
+BRO,BRO,19432900098.632812,"cierre 68.79 × 282,496,000 acc. (2022-01-26)",Brown & Brown
+BF.B,BF.B,33457585933.953125,"cierre 71.59 × 467,350,016 acc. (2022-01-04)",Brown–Forman
+CHRW,CHRW,14202121900.84076,"cierre 107.90 × 131,623,000 acc. (2022-02-09)",C. H. Robinson
+CDNS,CDNS,51580236646.01758,"cierre 183.16 × 281,612,992 acc. (2021-11-24)",Cadence Design Systems
+CZR,CZR,19981456040.95459,"cierre 93.47 × 213,774,000 acc. (2022-02-12)",Caesars Entertainment
+CPB,CPB,13198019926.617188,"cierre 43.74 × 301,737,984 acc. (2021-12-13)",Campbell Soup
+COF,COF,61397924484.25293,"cierre 148.34 × 413,900,000 acc. (2022-01-27)",Capital One
+CAH,CAH,14409941728.882324,"cierre 52.01 × 277,060,992 acc. (2022-02-07)",Cardinal Health
+KMX,KMX,20559363065.7959,"cierre 127.01 × 161,872,000 acc. (2021-12-28)",CarMax
+CCL,CCL,25079031178.703125,"cierre 21.41 × 1,171,369,984 acc. (2022-01-29)",Carnival Corporation
+CARR,CARR,46763072287.26636,"cierre 52.52 × 890,385,984 acc. (2022-02-04)",Carrier Global
+CTLT,CTLT,,sin precios (Yahoo no tiene el histórico),Catalent
+CAT,CAT,111974997312.0,"cierre 207.00 × 540,942,016 acc. (2022-02-11)",Caterpillar
+CBOE,CBOE,13699360495.986938,"cierre 128.46 × 106,643,000 acc. (2021-12-04)",Cboe Global Markets
+CBRE,CBRE,36368151868.48828,"cierre 108.67 × 334,665,984 acc. (2022-02-12)",CBRE
+CDW,CDW,27824573124.53125,"cierre 205.01 × 135,723,008 acc. (2021-12-04)",CDW
+CE,CE,18234804388.046265,"cierre 167.49 × 108,871,000 acc. (2022-02-12)",Celanese
+CNC,CNC,48141888255.19238,"cierre 82.65 × 582,478,976 acc. (2022-02-10)",Centene
+CNP,CNP,17369279005.845337,"cierre 27.62 × 628,865,984 acc. (2022-02-11)",CenterPoint Energy
+CDAY,CDAY,,sin precios (Yahoo no tiene el histórico),Ceridian
+CERN,CERN,,sin precios (Yahoo no tiene el histórico),Cerner
+CF,CF,15139790029.289062,"cierre 70.59 × 214,475,008 acc. (2021-12-05)",CF Industries
+CRL,CRL,18273663144.77539,"cierre 362.11 × 50,464,400 acc. (2022-02-12)",Charles River Laboratories
+SCHW,SCHW,165546816007.19238,"cierre 85.76 × 1,930,349,952 acc. (2021-12-04)",Charles Schwab
+CHTR,CHTR,111863614551.47656,"cierre 647.58 × 172,740,992 acc. (2022-01-31)",Charter Communications
+CVX,CVX,229896311609.83008,"cierre 119.26 × 1,927,689,984 acc. (2022-01-01)",Chevron
+CMG,CMG,48566186805.7251,"cierre 1690.67 × 28,726,000 acc. (2022-02-08)",Chipotle Mexican Grill
+CB,CB,79691878456.29883,"cierre 191.44 × 416,276,000 acc. (2022-01-25)",Chubb
+CHD,CHD,24613819778.442383,"cierre 101.71 × 242,000,000 acc. (2022-02-01)",Church & Dwight
+CI,CI,75634420614.44092,"cierre 234.20 × 322,948,000 acc. (2022-02-07)",Cigna
+CINF,CINF,18226657703.472656,"cierre 113.11 × 161,140,992 acc. (2022-02-11)",Cincinnati Financial
+CTAS,CTAS,43992127590.11841,"cierre 424.09 × 103,733,000 acc. (2022-01-08)",Cintas Corporation
+CSCO,CSCO,266384245945.8838,"cierre 63.16 × 4,217,609,984 acc. (2021-11-28)",Cisco Systems
+C,C,127301720902.40039,"cierre 63.10 × 2,017,459,968 acc. (2021-12-04)",Citigroup
+CFG,CFG,20743811529.228027,"cierre 49.14 × 422,136,992 acc. (2022-01-25)",Citizens Financial Group
+CTXS,CTXS,,sin precios (Yahoo no tiene el histórico),Citrix Systems
+CLX,CLX,21526535038.69629,"cierre 174.93 × 123,058,000 acc. (2022-02-07)",Clorox
+CME,CME,81030102756.6372,"cierre 225.46 × 359,399,008 acc. (2021-12-04)",CME Group
+CMS,CMS,18750369334.716797,"cierre 64.71 × 289,760,000 acc. (2022-02-11)",CMS Energy
+KO,KO,256472508085.88672,"cierre 59.30 × 4,325,000,192 acc. (2022-02-12)",Coca-Cola
+CTSH,CTSH,47592034784.4082,"cierre 89.57 × 531,339,008 acc. (2021-12-05)",Cognizant Technology Solutions
+CL,CL,71296595853.55469,"cierre 84.59 × 842,849,024 acc. (2022-02-11)",Colgate-Palmolive
+CMCSA,CMCSA,230016098219.27417,"cierre 50.74 × 4,533,230,080 acc. (2022-02-05)",Comcast
+CMA,CMA,,sin precios (Yahoo no tiene el histórico),Comerica
+CAG,CAG,16338513993.804932,"cierre 34.06 × 479,697,984 acc. (2022-01-08)",Conagra Brands
+COP,COP,97298938252.69238,"cierre 73.77 × 1,318,950,016 acc. (2021-12-11)",ConocoPhillips
+ED,ED,30114650717.359375,"cierre 85.13 × 353,748,992 acc. (2022-02-11)",Consolidated Edison
+STZ,STZ,47396166773.07129,"cierre 252.82 × 187,470,000 acc. (2022-01-04)",Constellation Brands
+COO,COO,20830413101.5625,"cierre 421.60 × 49,408,000 acc. (2021-12-14)",The Cooper Companies
+CPRT,CPRT,34854775876.15967,"cierre 146.95 × 237,188,000 acc. (2021-11-24)",Copart
+GLW,GLW,30867698860.168457,"cierre 37.19 × 830,000,000 acc. (2022-01-28)",Corning
+CTVA,CTVA,34185830315.400032,"cierre 46.90 × 728,908,992 acc. (2021-12-05)",Corteva
+COST,COST,251297358463.3789,"cierre 566.71 × 443,432,000 acc. (2021-12-24)",Costco
+CTRA,CTRA,,sin precios (Yahoo no tiene el histórico),Coterra
+CCI,CCI,89785855256.08203,"cierre 207.74 × 432,203,008 acc. (2022-02-11)",Crown Castle
+CSX,CSX,82242698901.5625,"cierre 37.08 × 2,217,979,904 acc. (2021-12-03)",CSX
+CMI,CMI,31283024826.049805,"cierre 219.53 × 142,500,000 acc. (2022-02-08)",Cummins
+CVS,CVS,137497457767.32422,"cierre 104.16 × 1,320,060,032 acc. (2021-12-03)",CVS Health
+DHI,DHI,37491611978.80469,"cierre 105.26 × 356,180,992 acc. (2021-12-22)",D. R. Horton
+DHR,DHR,225634840400.41083,"cierre 315.76 × 714,577,024 acc. (2022-02-11)",Danaher
+DRI,DRI,19002776564.086914,"cierre 148.78 × 127,724,000 acc. (2022-01-07)",Darden Restaurants
+DVA,DVA,11797869471.191406,"cierre 115.43 × 102,208,000 acc. (2022-02-08)",DaVita
+DE,DE,107902844354.51562,"cierre 350.11 × 308,196,992 acc. (2022-01-08)",Deere & Co.
+DAL,DAL,25786165290.590332,"cierre 40.29 × 640,014,016 acc. (2022-02-11)",Delta Air Lines
+XRAY,XRAY,12436552551.692871,"cierre 56.89 × 218,607,008 acc. (2021-12-02)",Dentsply Sirona
+DVN,DVN,30850889793.395996,"cierre 45.57 × 677,000,000 acc. (2022-02-11)",Devon Energy
+DXCM,DXCM,50476006250.36621,"cierre 520.79 × 96,922,000 acc. (2021-12-03)",DexCom
+FANG,FANG,20290906855.59082,"cierre 111.84 × 181,428,000 acc. (2022-01-11)",Diamondback Energy
+DLR,DLR,50825471515.515625,"cierre 175.09 × 290,281,984 acc. (2022-02-11)",Digital Realty Trust
+DFS,DFS,,sin precios (Yahoo no tiene el histórico),Discover Financial Services
+DISCA,WBD,,sin precios (Yahoo no tiene el histórico),Discovery (Series A)
+DISCK,DISCK,,sin precios (Yahoo no tiene el histórico),Discovery (Series C)
+DISH,DISH,,sin precios (Yahoo no tiene el histórico),Dish Network
+DG,DG,54643370372.41113,"cierre 235.48 × 232,051,008 acc. (2022-01-04)",Dollar General
+DLTR,DLTR,31757038108.09326,"cierre 141.17 × 224,956,000 acc. (2021-11-26)",Dollar Tree
+D,D,63456288056.978516,"cierre 78.35 × 809,907,968 acc. (2022-02-11)",Dominion Energy
+DPZ,DPZ,20115244100.756836,"cierre 553.22 × 36,360,300 acc. (2022-02-12)",Domino's Pizza
+DOV,DOV,25676843887.004395,"cierre 178.33 × 143,984,992 acc. (2021-12-03)",Dover Corporation
+DOW,DOW,41811674899.82568,"cierre 56.87 × 735,214,976 acc. (2022-01-31)",Dow
+DTE,DTE,23090648339.126587,"cierre 119.18 × 193,746,000 acc. (2022-02-11)",DTE Energy
+DUK,DUK,79619302942.7461,"cierre 103.49 × 769,342,976 acc. (2022-02-11)",Duke Energy
+DRE,DRE,,sin precios (Yahoo no tiene el histórico),Duke Realty
+DD,DD,41790269628.204956,"cierre 80.66 × 518,104,000 acc. (2021-11-26)",DuPont
+DXC,DXC,8124003828.086853,"cierre 33.23 × 244,478,000 acc. (2022-02-04)",DXC Technology
+EMN,EMN,16083056830.749512,"cierre 119.63 × 134,440,000 acc. (2022-02-11)",Eastman Chemical
+ETN,ETN,68628430130.12695,"cierre 168.66 × 406,904,000 acc. (2022-01-26)",Eaton
+EBAY,EBAY,42085203253.862305,"cierre 66.80 × 630,017,984 acc. (2021-12-04)",eBay
+ECL,ECL,65861695973.35986,"cierre 229.83 × 286,567,008 acc. (2022-02-11)",Ecolab
+EIX,EIX,25647589891.571045,"cierre 67.51 × 379,908,000 acc. (2022-02-11)",Edison International
+EW,EW,80127025327.06055,"cierre 128.34 × 624,334,016 acc. (2022-02-12)",Edwards Lifesciences
+EA,EA,,sin precios (Yahoo no tiene el histórico),Electronic Arts
+EMR,EMR,54661342246.63037,"cierre 91.76 × 595,699,008 acc. (2021-12-14)",Emerson Electric
+ENPH,ENPH,24884517988.28125,"cierre 184.45 × 134,912,000 acc. (2021-12-04)",Enphase Energy
+ETR,ETR,22389282815.472656,"cierre 111.40 × 200,980,992 acc. (2022-02-11)",Entergy
+EOG,EOG,53336805084.103516,"cierre 91.16 × 585,089,984 acc. (2022-02-11)",EOG Resources
+EPAM,EPAM,36425327812.37793,"cierre 642.20 × 56,719,600 acc. (2022-02-04)",EPAM Systems
+EFX,EFX,34648568000.0,"cierre 284.00 × 122,002,000 acc. (2021-12-04)",Equifax
+EQIX,EQIX,75284346413.03711,"cierre 836.11 × 90,041,200 acc. (2021-12-04)",Equinix
+EQR,EQR,,sin precios (Yahoo no tiene el histórico),Equity Residential
+ESS,ESS,23088656324.21875,"cierre 353.86 × 65,248,000 acc. (2022-02-04)",Essex Property Trust
+EL,EL,133284780668.03906,"cierre 370.29 × 359,947,008 acc. (2021-12-05)",Estée Lauder Companies
+ETSY,ETSY,26615134401.428223,"cierre 209.93 × 126,781,000 acc. (2021-11-28)",Etsy
+EVRG,EVRG,15670666441.955566,"cierre 68.16 × 229,910,000 acc. (2022-01-05)",Evergy
+ES,ES,30643429261.788574,"cierre 89.13 × 343,806,016 acc. (2022-02-11)",Eversource Energy
+RE,EG,10666089334.106445,"cierre ajustado 272.79 × 39,100,000 acc. ajustadas (balance 2022-12-31)",Everest Re
+EXC,EXC,55832610135.97266,"cierre 57.07 × 978,318,016 acc. (2021-12-10)",Exelon
+EXPE,EXPE,28805008350.097656,"cierre 184.97 × 155,728,000 acc. (2022-01-27)",Expedia Group
+EXPD,EXPD,22156348022.644043,"cierre 130.79 × 169,404,000 acc. (2021-12-04)",Expeditors
+EXR,EXR,30609986399.617676,"cierre 219.23 × 139,624,992 acc. (2022-02-12)",Extra Space Storage
+XOM,XOM,270723607034.20898,"cierre 63.54 × 4,260,679,936 acc. (2021-12-05)",ExxonMobil
+FFIV,FFIV,14737595250.0,"cierre 242.75 × 60,711,000 acc. (2022-01-27)",F5
+FDS,FDS,17992222728.74756,"cierre 476.02 × 37,797,200 acc. (2022-01-04)",FactSet
+FAST,FAST,35667321924.09302,"cierre 61.98 × 575,465,024 acc. (2022-01-22)",Fastenal
+FRT,FRT,10635381081.83789,"cierre 136.72 × 77,789,504 acc. (2022-01-06)",Federal Realty Investment Trust
+FDX,FDX,68507730831.745285,"cierre 258.55 × 264,968,992 acc. (2021-12-21)",FedEx
+FIS,FIS,69345746620.62451,"cierre 113.88 × 608,937,024 acc. (2022-02-11)",Fidelity National Information Services
+FITB,FITB,30499691295.07617,"cierre 44.67 × 682,777,984 acc. (2022-01-25)",Fifth Third Bancorp
+FE,FE,23514555396.72168,"cierre 41.24 × 570,188,032 acc. (2021-12-27)",FirstEnergy
+FRC,FRC,,sin precios (Yahoo no tiene el histórico),First Republic Bank
+FISV,FI,,sin precios (Yahoo no tiene el histórico),Fiserv
+FLT,CPAY,16953469061.763382,"cierre ajustado 231.11 × 73,356,709 acc. ajustadas (balance 2022-12-31)",Fleetcor
+FMC,FMC,13961622843.406677,"cierre 110.15 × 126,751,000 acc. (2021-11-26)",FMC Corporation
+F,F,86998143842.77344,"cierre 21.77 × 3,996,239,872 acc. (2021-12-05)",Ford
+FTNT,FTNT,54465120449.06616,"cierre 333.12 × 163,500,000 acc. (2022-02-12)",Fortinet
+FTV,FTV,26418987705.47676,"cierre 73.57 × 359,100,000 acc. (2022-02-06)",Fortive
+FBHS,FBIN,11454705619.04737,"cierre ajustado 89.46 × 128,040,559 acc. ajustadas (balance 2022-12-31)",Fortune Brands Home & Security
+FOXA,FOXA,20778746719.70215,"cierre 37.64 × 552,038,976 acc. (2022-01-04)",Fox Corporation (Class A)
+FOX,FOX,20778742516.75415,"cierre 34.99 × 593,848,000 acc. (2022-01-04)",Fox Corporation (Class B)
+BEN,BEN,16789193123.321533,"cierre 33.41 × 502,520,000 acc. (2022-01-12)",Franklin Resources
+FCX,FCX,62809846234.20508,"cierre 41.48 × 1,514,220,032 acc. (2022-02-04)",Freeport-McMoRan
+GPS,GPS,,sin precios (Yahoo no tiene el histórico),Gap
+GRMN,GRMN,25684603686.920166,"cierre 133.55 × 192,322,000 acc. (2022-02-12)",Garmin
+IT,IT,26477667737.27417,"cierre 321.96 × 82,239,000 acc. (2022-02-12)",Gartner
+GNRC,GNRC,21949642131.04248,"cierre 347.91 × 63,090,000 acc. (2022-02-12)",Generac Holdings
+GD,GD,57595252864.23047,"cierre 207.46 × 277,620,992 acc. (2022-01-28)",General Dynamics
+GE,GE,105798566555.3071,"cierre 96.24 × 1,099,320,064 acc. (2022-02-12)",General Electric
+GIS,GIS,40571702494.34912,"cierre 67.26 × 603,206,976 acc. (2021-12-23)",General Mills
+GM,GM,90076492503.66211,"cierre 61.17 × 1,472,560,000 acc. (2022-01-26)",General Motors
+GPC,GPC,19644265416.870117,"cierre 137.93 × 142,422,000 acc. (2022-02-12)",Genuine Parts
+GILD,GILD,91614106149.96875,"cierre 72.58 × 1,262,249,984 acc. (2022-02-04)",Gilead Sciences
+GL,GL,9586946506.530762,"cierre 94.94 × 100,979,000 acc. (2022-02-11)",Globe Life
+GPN,GPN,41114396948.129395,"cierre 141.70 × 290,151,008 acc. (2022-02-12)",Global Payments
+GS,GS,133409246421.27637,"cierre 395.33 × 337,463,008 acc. (2022-02-04)",Goldman Sachs
+GWW,GWW,26285504628.90625,"cierre 510.20 × 51,520,000 acc. (2022-02-12)",W. W. Grainger
+HAL,HAL,21556742842.013184,"cierre 23.99 × 898,572,032 acc. (2022-02-09)",Halliburton
+HIG,HIG,23278899715.423584,"cierre 69.51 × 334,900,000 acc. (2022-02-07)",The Hartford
+HAS,HAS,14094045554.771484,"cierre 102.17 × 137,947,008 acc. (2022-02-11)",Hasbro
+HCA,HCA,79024726442.14014,"cierre 254.08 × 311,023,008 acc. (2022-02-11)",HCA Healthcare
+PEAK,DOC,8154288042.026123,"cierre 36.13 × 225,692,992 acc. (2022-02-11)",Healthpeak Properties
+HSIC,HSIC,10737527862.319946,"cierre 77.43 × 138,674,000 acc. (2022-02-12)",Henry Schein
+HSY,HSY,39802034223.083496,"cierre 193.21 × 206,004,000 acc. (2021-12-04)",The Hershey Company
+HES,HES,,sin precios (Yahoo no tiene el histórico),Hess Corporation
+HPE,HPE,20876120810.546875,"cierre 16.14 × 1,293,440,000 acc. (2021-12-14)",Hewlett Packard Enterprise
+HLT,HLT,43056970897.49121,"cierre 154.48 × 278,721,984 acc. (2021-11-26)",Hilton Worldwide
+HOLX,HOLX,,sin precios (Yahoo no tiene el histórico),Hologic
+HD,HD,426718248896.4844,"cierre 408.64 × 1,044,240,000 acc. (2021-11-26)",Home Depot
+HON,HON,142365875366.73343,"cierre 206.80 × 688,422,976 acc. (2021-12-05)",Honeywell
+HRL,HRL,26656463893.447266,"cierre 49.13 × 542,569,984 acc. (2021-12-14)",Hormel
+HST,HST,12739747572.48462,"cierre 17.66 × 721,390,016 acc. (2022-02-12)",Host Hotels & Resorts
+HWM,HWM,13633303132.141113,"cierre 32.33 × 421,692,000 acc. (2022-02-04)",Howmet Aerospace
+HPQ,HPQ,41165014895.62988,"cierre 38.02 × 1,082,720,000 acc. (2021-12-14)",HP
+HUM,HUM,58940865945.80078,"cierre 465.45 × 126,632,000 acc. (2022-02-05)",Humana
+HBAN,HBAN,22716292779.82715,"cierre 15.80 × 1,437,740,032 acc. (2022-01-25)",Huntington Bancshares
+HII,HII,7452948171.035767,"cierre 186.04 × 40,061,000 acc. (2021-11-25)",Huntington Ingalls Industries
+IEX,IEX,17539707843.38379,"cierre 230.69 × 76,031,504 acc. (2022-02-11)",IDEX Corporation
+IDXX,IDXX,53505610364.0625,"cierre 631.01 × 84,793,600 acc. (2022-02-12)",Idexx Laboratories
+INFO,INFO,,sin precios (Yahoo no tiene el histórico),IHS Markit
+ITW,ITW,76423742591.11572,"cierre 243.48 × 313,880,992 acc. (2022-02-11)",Illinois Tool Works
+ILMN,ILMN,59529978557.8125,"cierre 380.87 × 156,300,000 acc. (2021-12-04)",Illumina
+INCY,INCY,16339308131.402344,"cierre 73.97 × 220,891,008 acc. (2021-12-03)",Incyte
+IR,IR,24304293508.30774,"cierre 59.63 × 407,584,992 acc. (2021-12-04)",Ingersoll Rand
+INTC,INTC,220393684402.48242,"cierre 53.21 × 4,141,959,936 acc. (2022-01-26)",Intel
+ICE,ICE,75260077971.76367,"cierre 133.95 × 561,852,032 acc. (2022-02-04)",Intercontinental Exchange
+IBM,IBM,121935366782.22656,"cierre 136.04 × 896,320,000 acc. (2021-10-20)",IBM
+IP,IP,18120036498.869873,"cierre 46.79 × 387,263,008 acc. (2022-02-12)",International Paper
+IPG,IPG,,sin precios (Yahoo no tiene el histórico),Interpublic Group
+IFF,IFF,37958048590.05469,"cierre 149.12 × 254,547,008 acc. (2022-02-12)",International Flavors & Fragrances
+INTU,INTU,178811462245.85156,"cierre 631.47 × 283,167,008 acc. (2021-11-30)",Intuit
+ISRG,ISRG,128787840000.0,"cierre 360.00 × 357,744,000 acc. (2022-02-07)",Intuitive Surgical
+IVZ,IVZ,10741348422.24121,"cierre 23.29 × 461,200,000 acc. (2022-01-27)",Invesco
+IPGP,IPGP,9265619778.851318,"cierre 173.81 × 53,308,900 acc. (2022-02-12)",IPG Photonics
+IQV,IQV,52264720634.765625,"cierre 273.58 × 191,040,000 acc. (2022-02-12)",IQVIA
+IRM,IRM,14859706732.756348,"cierre 51.32 × 289,550,016 acc. (2022-02-12)",Iron Mountain
+JKHY,JKHY,12489487500.0,"cierre 171.50 × 72,825,000 acc. (2022-02-12)",Jack Henry & Associates
+J,J,18069049865.20414,"cierre 139.58 × 129,453,000 acc. (2021-12-14)",Jacobs Engineering Group
+JBHT,JBHT,21212172575.134277,"cierre 201.84 × 105,094,000 acc. (2022-01-20)",J. B. Hunt
+SJM,SJM,14824058730.697632,"cierre 136.80 × 108,363,000 acc. (2021-11-26)",JM Smucker
+JNJ,JNJ,451596197303.6328,"cierre 171.54 × 2,632,600,064 acc. (2021-12-04)",Johnson & Johnson
+JCI,JCI,55733534528.25928,"cierre 79.35 × 702,376,000 acc. (2022-01-25)",Johnson Controls
+JPM,JPM,477867131870.83203,"cierre 161.70 × 2,955,269,888 acc. (2021-12-31)",JPMorgan Chase
+JNPR,JNPR,,sin precios (Yahoo no tiene el histórico),Juniper Networks
+K,K,,sin precios (Yahoo no tiene el histórico),Kellogg's
+KEY,KEY,21902282551.85437,"cierre 23.58 × 928,849,984 acc. (2022-01-25)",KeyCorp
+KEYS,KEYS,37095292390.319824,"cierre 202.66 × 183,042,000 acc. (2021-12-21)",Keysight Technologies
+KMB,KMB,47970421533.203125,"cierre 142.43 × 336,800,000 acc. (2022-01-28)",Kimberly-Clark
+KIM,KIM,15157478369.592651,"cierre 24.58 × 616,659,008 acc. (2022-02-12)",Kimco Realty
+KMI,KMI,37372993063.967285,"cierre 16.35 × 2,285,809,920 acc. (2022-02-04)",Kinder Morgan
+KLAC,KLAC,65969214267.959595,"cierre 435.09 × 151,622,000 acc. (2021-12-05)",KLA Corporation
+KHC,KHC,44236802539.94531,"cierre 36.14 × 1,224,039,936 acc. (2021-12-10)",Kraft Heinz
+KR,KR,33226217630.27954,"cierre 45.19 × 735,256,000 acc. (2021-12-14)",Kroger
+LHX,LHX,41515322994.634766,"cierre 211.57 × 196,224,992 acc. (2021-12-11)",L3Harris Technologies
+LH,LH,28535827238.30566,"cierre 298.18 × 95,700,000 acc. (2022-02-12)",LabCorp
+LRCX,LRCX,101763903964.61426,"cierre 725.46 × 140,275,008 acc. (2022-01-28)",Lam Research
+LW,LW,9281439414.123535,"cierre 63.92 × 145,204,000 acc. (2022-01-10)",Lamb Weston
+LVS,LVS,29681010955.84375,"cierre 38.85 × 763,990,016 acc. (2021-11-25)",Las Vegas Sands
+LDOS,LDOS,12666999161.876465,"cierre 90.26 × 140,339,008 acc. (2022-02-12)",Leidos
+LEN,LEN,33865571764.31018,"cierre 111.81 × 302,884,992 acc. (2022-01-04)",Lennar
+LLY,LLY,259934754669.4336,"cierre 271.73 × 956,592,000 acc. (2021-12-04)",Eli Lilly
+LNC,LNC,12352611837.768555,"cierre 69.71 × 177,200,000 acc. (2022-02-05)",Lincoln National
+LIN,LIN,174993923478.77344,"cierre 338.64 × 516,755,008 acc. (2022-01-26)",Linde
+LYV,LYV,27623069500.823975,"cierre 121.14 × 228,026,000 acc. (2022-02-03)",Live Nation Entertainment
+LKQ,LKQ,17084288156.791992,"cierre 58.61 × 291,491,008 acc. (2021-12-05)",LKQ Corporation
+LMT,LMT,96501794565.71484,"cierre 354.36 × 272,327,008 acc. (2022-01-26)",Lockheed Martin
+L,L,14792782046.69751,"cierre 58.10 × 254,608,992 acc. (2021-12-04)",Loews Corporation
+LOW,LOW,172149094313.07715,"cierre 255.51 × 673,747,008 acc. (2021-11-27)",Lowe's
+LUMN,LUMN,13003402601.508484,"cierre 12.70 × 1,023,889,984 acc. (2022-02-11)",Lumen Technologies
+LYB,LYB,30742801208.496094,"cierre 93.16 × 330,000,000 acc. (2022-02-01)",LyondellBasell
+MTB,MTB,20364401250.0,"cierre 158.25 × 128,685,000 acc. (2022-02-12)",M&T Bank
+MRO,MRO,,sin precios (Yahoo no tiene el histórico),Marathon Oil
+MPC,MPC,40419508233.23047,"cierre 65.66 × 615,587,968 acc. (2021-12-05)",Marathon Petroleum
+MKTX,MKTX,15090055484.390259,"cierre 396.83 × 38,026,500 acc. (2022-02-11)",MarketAxess
+MAR,MAR,53382703033.9668,"cierre 163.91 × 325,683,008 acc. (2022-02-12)",Marriott International
+MMC,MMC,,sin precios (Yahoo no tiene el histórico),Marsh & McLennan
+MLM,MLM,27386278528.198242,"cierre 439.01 × 62,381,900 acc. (2022-02-12)",Martin Marietta Materials
+MAS,MAS,16655662480.682373,"cierre 69.42 × 239,926,000 acc. (2022-02-10)",Masco
+MA,MA,364479528176.5039,"cierre 370.95 × 982,556,992 acc. (2021-12-31)",Mastercard
+MTCH,MTCH,37998497266.69043,"cierre 134.23 × 283,084,992 acc. (2021-11-28)",Match Group
+MKC,MKC,25608758064.999023,"cierre 95.82 × 267,259,008 acc. (2022-01-04)",McCormick & Company
+MCD,MCD,200695049917.55273,"cierre 268.58 × 747,244,992 acc. (2021-12-03)",McDonald's
+MCK,MCK,37164884714.29443,"cierre 248.10 × 149,798,000 acc. (2022-02-04)",McKesson Corporation
+MDT,MDT,144560185223.40527,"cierre 106.10 × 1,362,489,984 acc. (2022-01-25)",Medtronic
+MRK,MRK,194169012277.86133,"cierre 76.87 × 2,525,939,968 acc. (2021-12-09)",Merck
+FB,META,916197552592.1719,"cierre 338.54 × 2,706,319,872 acc. (2022-06-09, get_shares_full)",Meta Platforms
+MET,MET,52196366645.476074,"cierre 63.23 × 825,500,032 acc. (2022-02-05)",MetLife
+MTD,MTD,38497829165.29541,"cierre 1674.86 × 22,985,700 acc. (2022-02-12)",Mettler Toledo
+MGM,MGM,21891115943.50232,"cierre 45.48 × 481,335,008 acc. (2021-12-04)",MGM Resorts International
+MCHP,MCHP,48828645888.0,"cierre 88.00 × 554,870,976 acc. (2021-12-10)",Microchip Technology
+MU,MU,107218931936.0,"cierre 95.75 × 1,119,779,968 acc. (2022-01-10)",Micron Technology
+MSFT,MSFT,2509577195008.0,"cierre 334.75 × 7,496,869,888 acc. (2022-01-27)",Microsoft
+MAA,MAA,26081156373.168945,"cierre 226.13 × 115,337,000 acc. (2022-02-05)",Mid-America Apartments
+MRNA,MRNA,95301019976.53516,"cierre 235.05 × 405,449,984 acc. (2021-12-04)",Moderna
+MHK,MHK,12460729710.681152,"cierre 183.97 × 67,732,400 acc. (2022-02-12)",Mohawk Industries
+TAP,TAP,10298245868.133545,"cierre 47.35 × 217,492,000 acc. (2022-01-04)",Molson Coors
+MDLZ,MDLZ,91588130739.21875,"cierre 65.97 × 1,388,329,984 acc. (2022-02-08)",Mondelez International
+MPWR,MPWR,24047137076.59912,"cierre 494.85 × 48,594,800 acc. (2022-02-04)",Monolithic Power Systems
+MNST,MNST,51083080316.76123,"cierre 96.54 × 529,139,008 acc. (2022-02-12)",Monster Beverage
+MCO,MCO,71309380319.21387,"cierre 383.59 × 185,900,000 acc. (2021-12-04)",Moody's
+MS,MS,177536684326.17188,"cierre 100.19 × 1,772,000,000 acc. (2022-01-24)",Morgan Stanley
+MOS,MOS,14886776748.279297,"cierre 40.19 × 370,409,984 acc. (2022-02-11)",The Mosaic Company
+MSI,MSI,45168121333.521484,"cierre 267.43 × 168,896,992 acc. (2022-02-12)",Motorola Solutions
+MSCI,MSCI,49075793408.203125,"cierre 595.58 × 82,400,000 acc. (2022-01-31)",MSCI
+NDAQ,NDAQ,33855764691.101074,"cierre 202.46 × 167,222,000 acc. (2021-12-11)",Nasdaq
+NTAP,NTAP,20536264284.332275,"cierre 92.39 × 222,278,000 acc. (2021-12-07)",NetApp
+NFLX,NFLX,271680280001.40625,"cierre 597.37 × 454,793,984 acc. (2022-01-25)",Netflix
+NWL,NWL,9405594259.643555,"cierre 22.11 × 425,400,000 acc. (2022-02-12)",Newell Brands
+NEM,NEM,48627586422.80322,"cierre 60.98 × 797,435,008 acc. (2021-12-04)",Newmont
+NWSA,NWSA,13509669335.915771,"cierre 22.77 × 593,310,016 acc. (2022-01-04)",News Corp (Class A)
+NWS,NWS,13509678178.38794,"cierre 22.88 × 590,457,984 acc. (2022-01-04)",News Corp (Class B)
+NEE,NEE,179849762518.6914,"cierre 91.66 × 1,962,140,032 acc. (2021-12-04)",NextEra Energy
+NLSN,NLSN,,sin precios (Yahoo no tiene el histórico),Nielsen Holdings
+NKE,NKE,260392662835.11328,"cierre 164.67 × 1,581,299,968 acc. (2022-01-08)",Nike
+NI,NI,10807241559.60608,"cierre 27.52 × 392,704,992 acc. (2022-02-11)",NiSource
+NSC,NSC,70211656854.63867,"cierre 292.35 × 240,163,008 acc. (2022-01-28)",Norfolk Southern
+NTRS,NTRS,25076872765.960693,"cierre 120.70 × 207,762,000 acc. (2022-01-25)",Northern Trust
+NOC,NOC,60182003869.4458,"cierre 385.53 × 156,102,000 acc. (2022-01-28)",Northrop Grumman
+NLOK,NLOK,,sin precios (Yahoo no tiene el histórico),NortonLifeLock
+NCLH,NCLH,9246664687.225342,"cierre 22.18 × 416,892,000 acc. (2022-02-11)",Norwegian Cruise Line Holdings
+NRG,NRG,10518283559.523193,"cierre 42.96 × 244,839,008 acc. (2022-02-11)",NRG Energy
+NUE,NUE,30746880249.023438,"cierre 113.04 × 272,000,000 acc. (2022-01-31)",Nucor
+NVDA,NVDA,750615327224.7314,"cierre 301.21 × 2,492,000,000 acc. (2021-07-20, get_shares_full)",Nvidia
+NVR,NVR,19846945746.40625,"cierre 5757.01 × 3,447,440 acc. (2022-02-03)",NVR
+NXPI,NXPI,61489026734.865234,"cierre 231.22 × 265,932,992 acc. (2022-02-12)",NXP
+ORLY,ORLY,47738978521.79718,"cierre 695.94 × 68,596,400 acc. (2022-02-04)",O'Reilly Automotive
+OXY,OXY,29009449112.720337,"cierre 31.06 × 933,980,992 acc. (2022-02-12)",Occidental Petroleum
+ODFL,ODFL,39836359508.42285,"cierre 346.37 × 115,011,000 acc. (2021-12-03)",Old Dominion Freight Line
+OMC,OMC,15442418752.441406,"cierre 73.89 × 208,992,000 acc. (2022-02-12)",Omnicom Group
+OKE,OKE,26751760898.570435,"cierre 59.99 × 445,936,992 acc. (2022-02-11)",Oneok
+ORCL,ORCL,234732552042.7832,"cierre 87.90 × 2,670,449,920 acc. (2021-12-14)",Oracle
+OGN,OGN,7900617961.31134,"cierre 31.16 × 253,550,000 acc. (2021-12-04)",Organon & Co.
+OTIS,OTIS,36363996841.191895,"cierre 85.57 × 424,961,984 acc. (2022-02-08)",Otis Worldwide
+PCAR,PCAR,30729104503.440857,"cierre 88.48 × 347,300,000 acc. (2022-01-27)",Paccar
+PKG,PKG,12786711645.977783,"cierre 134.61 × 94,990,800 acc. (2022-02-12)",Packaging Corporation of America
+PH,PH,41673132000.0,"cierre 316.00 × 131,877,000 acc. (2022-02-04)",Parker-Hannifin
+PAYX,PAYX,48525421012.22266,"cierre 134.51 × 360,756,992 acc. (2021-12-24)",Paychex
+PAYC,PAYC,25147260079.614258,"cierre 404.94 × 62,101,200 acc. (2022-02-04)",Paycom
+PYPL,PYPL,242838701084.16406,"cierre 194.94 × 1,245,709,952 acc. (2022-02-04)",PayPal
+PENN,PENN,8584188856.536865,"cierre 50.64 × 169,514,000 acc. (2022-02-12)",Penn National Gaming
+PNR,PNR,11747282866.500854,"cierre 70.99 × 165,478,000 acc. (2022-02-11)",Pentair
+PBCT,PBCT,,sin precios (Yahoo no tiene el histórico),People's United Financial
+PEP,PEP,239307445289.30664,"cierre 172.98 × 1,383,440,000 acc. (2022-02-04)",PepsiCo
+PKI,RVTY,24274859614.56299,"cierre ajustado 192.20 × 126,300,000 acc. ajustadas (balance 2022-12-31)",PerkinElmer
+PFE,PFE,317969102222.16016,"cierre 56.65 × 5,612,870,144 acc. (2021-12-04)",Pfizer
+PM,PM,152502680316.083,"cierre 95.73 × 1,593,049,984 acc. (2022-01-25)",Philip Morris International
+PSX,PSX,33189417332.05957,"cierre 75.74 × 438,201,984 acc. (2021-12-15)",Phillips 66
+PNW,PNW,7873638113.288879,"cierre 69.79 × 112,819,000 acc. (2022-02-12)",Pinnacle West Capital
+PXD,PXD,,sin precios (Yahoo no tiene el histórico),Pioneer Natural Resources
+PNC,PNC,87452400512.69531,"cierre 208.22 × 420,000,000 acc. (2022-01-21)",PNC Financial Services
+POOL,POOL,22058422000.0,"cierre 550.25 × 40,088,000 acc. (2022-02-12)",Pool Corporation
+PPG,PPG,40500610684.180664,"cierre 170.60 × 237,400,992 acc. (2022-02-12)",PPG Industries
+PPL,PPL,22626580746.279297,"cierre 30.14 × 750,716,032 acc. (2022-02-12)",PPL
+PFG,PFG,19405700661.64209,"cierre 73.21 × 265,068,992 acc. (2022-02-12)",Principal Financial Group
+PG,PG,390482701401.4453,"cierre 162.90 × 2,397,070,080 acc. (2022-01-25)",Procter & Gamble
+PGR,PGR,59608800000.0,"cierre 102.00 × 584,400,000 acc. (2021-12-21)",Progressive Corporation
+PLD,PLD,122608585842.63477,"cierre 164.90 × 743,532,992 acc. (2022-02-04)",Prologis
+PRU,PRU,41549759307.86133,"cierre 109.92 × 378,000,000 acc. (2021-12-05)",Prudential Financial
+PTC,PTC,14495898955.688477,"cierre 122.98 × 117,872,000 acc. (2021-12-22)",PTC
+PEG,PEG,33775410158.82715,"cierre 66.16 × 510,511,008 acc. (2021-11-30)",Public Service Enterprise Group
+PSA,PSA,64053677108.18359,"cierre 365.28 × 175,355,008 acc. (2022-02-12)",Public Storage
+PHM,PHM,13946835076.661133,"cierre 56.09 × 248,651,008 acc. (2022-02-09)",PulteGroup
+PVH,PVH,7563179136.1328125,"cierre 108.08 × 69,977,600 acc. (2021-12-13)",PVH
+QRVO,QRVO,,sin precios (Yahoo no tiene el histórico),Qorvo
+PWR,PWR,15998363149.800293,"cierre 112.27 × 142,499,008 acc. (2021-12-03)",Quanta Services
+QCOM,QCOM,209501166271.07812,"cierre 186.21 × 1,125,080,064 acc. (2022-01-22)",Qualcomm
+DGX,DGX,19557650726.31836,"cierre 164.35 × 119,000,000 acc. (2022-02-07)",Quest Diagnostics
+RL,RL,8605549302.00879,"cierre 120.92 × 71,167,296 acc. (2022-02-05)",Ralph Lauren Corporation
+RJF,RJF,21374308126.831055,"cierre 102.86 × 207,800,000 acc. (2022-01-13)",Raymond James Financial
+RTX,RTX,131057708114.07422,"cierre 86.97 × 1,506,930,048 acc. (2021-12-04)",Raytheon Technologies
+O,O,40282465703.822266,"cierre 71.20 × 565,764,992 acc. (2022-01-05)",Realty Income Corporation
+REG,REG,13090584623.37793,"cierre 76.12 × 171,972,992 acc. (2022-02-12)",Regency Centers
+REGN,REGN,68064804250.12207,"cierre 627.10 × 108,539,000 acc. (2022-02-08)",Regeneron Pharmaceuticals
+RF,RF,21355140071.868896,"cierre 22.67 × 942,000,000 acc. (2022-01-25)",Regions Financial Corporation
+RSG,RSG,42937836194.5166,"cierre 135.41 × 317,095,008 acc. (2022-02-12)",Republic Services
+RMD,RMD,37949186768.06641,"cierre 259.51 × 146,234,000 acc. (2022-01-29)",ResMed
+RHI,RHI,12185068160.247803,"cierre 109.45 × 111,330,000 acc. (2021-12-25)",Robert Half International
+ROK,ROK,39404976004.852295,"cierre 339.66 × 116,013,000 acc. (2021-12-24)",Rockwell Automation
+ROL,ROL,16532845380.392822,"cierre 33.60 × 492,048,992 acc. (2021-12-05)",Rollins
+ROP,ROP,50102210578.76587,"cierre 474.97 × 105,485,000 acc. (2022-02-12)",Roper Technologies
+ROST,ROST,39982822283.37305,"cierre 113.16 × 353,329,984 acc. (2021-12-13)",Ross Stores
+RCL,RCL,20597101066.589355,"cierre 80.83 × 254,820,000 acc. (2022-02-08)",Royal Caribbean Group
+SPGI,SPGI,111125098176.02539,"cierre 461.10 × 241,000,000 acc. (2021-12-04)",S&P Global
+CRM,CRM,251628106613.15918,"cierre 255.46 × 985,000,000 acc. (2021-12-08)",Salesforce
+SBAC,SBAC,41563095645.75195,"cierre 379.87 × 109,414,000 acc. (2022-02-04)",SBA Communications
+SLB,SLB,44515211621.33545,"cierre 31.72 × 1,403,379,968 acc. (2022-01-29)",Schlumberger
+STX,STX,24782040802.001953,"cierre 113.16 × 219,000,000 acc. (2022-01-28)",Seagate Technology
+SEE,SEE,,sin precios (Yahoo no tiene el histórico),Sealed Air
+SRE,SRE,42149291328.25049,"cierre 131.99 × 319,336,992 acc. (2022-02-11)",Sempra Energy
+NOW,NOW,126027999877.92969,"cierre 630.14 × 200,000,000 acc. (2022-02-06)",ServiceNow
+SHW,SHW,88915906239.7461,"cierre 339.12 × 262,196,000 acc. (2021-12-03)",Sherwin-Williams
+SBNY,SBNY,,sin precios (Yahoo no tiene el histórico),Signature Bank
+SPG,SPG,52676345585.24121,"cierre 160.30 × 328,611,008 acc. (2021-12-03)",Simon Property Group
+SWKS,SWKS,26634047556.518555,"cierre 159.78 × 166,692,000 acc. (2022-02-01)",Skyworks Solutions
+SNA,SNA,11420086592.10205,"cierre 213.32 × 53,535,000 acc. (2021-12-15)",Snap-on
+SEDG,SEDG,14834133416.107178,"cierre 282.45 × 52,519,500 acc. (2022-02-04)",SolarEdge
+SO,SO,72246564059.44824,"cierre 68.17 × 1,059,800,000 acc. (2022-02-11)",Southern Company
+LUV,LUV,26063048704.0,"cierre 44.00 × 592,342,016 acc. (2022-02-08)",Southwest Airlines
+SWK,SWK,30312723008.470703,"cierre 185.93 × 163,032,992 acc. (2021-12-03)",Stanley Black & Decker
+SBUX,SBUX,134709401419.85156,"cierre 116.68 × 1,154,520,064 acc. (2022-02-01)",Starbucks
+STT,STT,34567093988.708496,"cierre 94.45 × 365,983,008 acc. (2022-01-22)",State Street Corporation
+STE,STE,24262579842.590332,"cierre 242.57 × 100,023,000 acc. (2021-12-05)",Steris
+SYK,SYK,101258765865.47852,"cierre 268.42 × 377,240,000 acc. (2022-02-11)",Stryker Corporation
+SIVB,SIVB,,sin precios (Yahoo no tiene el histórico),SVB Financial
+SYF,SYF,25721173376.0,"cierre 47.00 × 547,259,008 acc. (2021-12-05)",Synchrony Financial
+SNPS,SNPS,55406462736.51123,"cierre 361.10 × 153,438,000 acc. (2021-12-16)",Synopsys
+SYY,SYY,40474189635.49805,"cierre 78.95 × 512,656,000 acc. (2021-12-03)",Sysco
+TMUS,TMUS,142947098850.34863,"cierre 114.43 × 1,249,209,984 acc. (2022-02-05)",T-Mobile US
+TROW,TROW,44597347259.67407,"cierre 194.58 × 229,198,000 acc. (2022-01-03)",T. Rowe Price
+TTWO,TTWO,20614451830.444336,"cierre 178.61 × 115,416,000 acc. (2022-01-12)",Take-Two Interactive
+TPR,TPR,11228586534.33142,"cierre 40.81 × 275,143,008 acc. (2022-02-12)",Tapestry
+TGT,TGT,111132810337.82959,"cierre 231.95 × 479,124,000 acc. (2021-11-29)",Target
+TEL,TEL,52487447712.0,"cierre 161.00 × 326,008,992 acc. (2022-01-17)",TE Connectivity
+TDY,TDY,20629530410.473633,"cierre 442.17 × 46,655,200 acc. (2021-12-05)",Teledyne Technologies
+TFX,TFX,15680427364.654541,"cierre 334.73 × 46,845,000 acc. (2021-12-03)",Teleflex
+TER,TER,27076594539.489746,"cierre 166.11 × 163,004,000 acc. (2021-12-05)",Teradyne
+TSLA,TSLA,1204891023181.1367,"cierre 1199.78 × 1,004,259,968 acc. (2021-12-04)",Tesla
+TXN,TXN,176114405639.64844,"cierre 190.60 × 924,000,000 acc. (2022-01-27)",Texas Instruments
+TXT,TXT,17187950175.476074,"cierre 76.34 × 225,150,000 acc. (2022-01-21)",Textron
+TMO,TMO,254129429425.78125,"cierre 644.92 × 394,048,000 acc. (2021-12-23)",Thermo Fisher Scientific
+TJX,TJX,91701080286.5625,"cierre 75.55 × 1,213,779,968 acc. (2022-01-21)",TJX Companies
+TSCO,TSCO,28205077202.510834,"cierre 235.72 × 119,655,000 acc. (2022-01-21)",Tractor Supply Company
+TT,TT,46910528669.43359,"cierre 194.85 × 240,752,000 acc. (2022-02-03)",Trane Technologies
+TDG,TDG,35573857265.03906,"cierre 641.59 × 55,446,400 acc. (2022-02-01)",TransDigm Group
+TRV,TRV,37566900000.0,"cierre 155.75 × 241,200,000 acc. (2022-01-25)",The Travelers Companies
+TRMB,TRMB,21757373516.601562,"cierre 86.68 × 251,008,000 acc. (2021-12-05)",Trimble
+TFC,TFC,80200331958.89258,"cierre 60.40 × 1,327,820,032 acc. (2022-01-20)",Truist Financial
+TWTR,TWTR,,sin precios (Yahoo no tiene el histórico),Twitter
+TYL,TYL,21465433754.60205,"cierre 523.85 × 40,976,300 acc. (2021-12-05)",Tyler Technologies
+TSN,TSN,31878512205.635254,"cierre 87.80 × 363,080,992 acc. (2021-12-24)",Tyson Foods
+UDR,UDR,18520240913.38037,"cierre 59.90 × 309,185,984 acc. (2021-12-04)",UDR
+ULTA,ULTA,22364090840.582275,"cierre 413.23 × 54,120,200 acc. (2021-12-08)",Ulta Beauty
+USB,USB,84988680679.32129,"cierre 57.27 × 1,484,000,000 acc. (2022-01-23)",U.S. Bancorp
+UAA,UAA,9310596379.66919,"cierre 21.24 × 438,352,000 acc. (2022-01-04)",Under Armour (Class A)
+UA,UA,9310603482.757568,"cierre 18.07 × 515,252,000 acc. (2022-01-04)",Under Armour (Class C)
+UNP,UNP,157804469933.28613,"cierre 247.77 × 636,899,008 acc. (2022-02-08)",Union Pacific
+UAL,UAL,15103545231.20288,"cierre 45.49 × 332,019,008 acc. (2021-12-04)",United Airlines
+UNH,UNH,473072923148.51953,"cierre 502.28 × 941,851,008 acc. (2022-02-11)",UnitedHealth Group
+UPS,UPS,185561820416.0,"cierre 213.50 × 869,142,016 acc. (2021-12-05)",United Parcel Service
+URI,URI,23945579399.427734,"cierre 330.64 × 72,421,904 acc. (2022-01-28)",United Rentals
+UHS,UHS,10611358153.327148,"cierre 132.02 × 80,376,896 acc. (2021-12-04)",Universal Health Services
+VLO,VLO,31537608790.46631,"cierre 77.14 × 408,836,000 acc. (2021-12-04)",Valero Energy
+VTR,VTR,20729209801.818848,"cierre 51.93 × 399,176,000 acc. (2022-02-11)",Ventas
+VRSN,VRSN,28003874647.79663,"cierre 252.11 × 111,078,000 acc. (2021-12-04)",Verisign
+VRSK,VRSK,36403222401.42822,"cierre 221.66 × 164,230,000 acc. (2021-12-04)",Verisk Analytics
+VZ,VZ,220171433512.2627,"cierre 52.44 × 4,198,540,032 acc. (2022-02-04)",Verizon Communications
+VRTX,VRTX,56633884689.331055,"cierre 222.53 × 254,500,000 acc. (2022-01-28)",Vertex Pharmaceuticals
+VFC,VFC,28665967243.30957,"cierre 73.71 × 388,902,016 acc. (2022-02-01)",VF Corporation
+VIAC,VIAC,,sin precios (Yahoo no tiene el histórico),ViacomCBS
+VTRS,VTRS,17378545391.932983,"cierre 14.21 × 1,222,979,968 acc. (2022-02-04)",Viatris
+V,V,481346714664.1406,"cierre 221.43 × 2,173,809,920 acc. (2021-12-09)",Visa
+VNO,VNO,8391793595.774414,"cierre 43.78 × 191,680,992 acc. (2021-12-04)",Vornado Realty Trust
+VMC,VMC,27589368690.03296,"cierre 207.90 × 132,705,000 acc. (2021-12-04)",Vulcan Materials
+WRB,WRB,14365223113.198975,"cierre 81.26 × 176,780,992 acc. (2022-01-29)",W. R. Berkley Corporation
+WAB,WAB,17241709522.719727,"cierre 92.29 × 186,820,992 acc. (2021-12-05)",Wabtec
+WMT,WMT,401241755490.2051,"cierre 144.65 × 2,773,880,064 acc. (2021-12-05)",Walmart
+WBA,WBA,,sin precios (Yahoo no tiene el histórico),Walgreens Boots Alliance
+DIS,DIS,285376869708.01953,"cierre 156.76 × 1,820,470,016 acc. (2022-01-21)",The Walt Disney Company
+WM,WM,68076748137.87842,"cierre 162.74 × 418,316,000 acc. (2021-12-05)",Waste Management
+WAT,WAT,22431180770.690918,"cierre 364.59 × 61,524,400 acc. (2021-12-04)",Waters Corporation
+WEC,WEC,30310148763.5625,"cierre 96.09 × 315,435,008 acc. (2021-12-23)",WEC Energy Group
+WFC,WFC,202272173639.75098,"cierre 50.73 × 3,987,229,952 acc. (2022-01-19)",Wells Fargo
+WELL,WELL,38020294746.15234,"cierre 85.56 × 444,369,984 acc. (2021-12-04)",Welltower
+WST,WST,33281686122.192383,"cierre 445.92 × 74,636,000 acc. (2021-12-04)",West Pharmaceutical Services
+WDC,WDC,21237898381.35205,"cierre 65.93 × 322,128,000 acc. (2022-01-21)",Western Digital
+WRK,WRK,,sin precios (Yahoo no tiene el histórico),WestRock
+WY,WY,31095119686.09619,"cierre 40.57 × 766,456,000 acc. (2022-01-21)",Weyerhaeuser
+WHR,WHR,13729299819.94629,"cierre 232.70 × 59,000,000 acc. (2022-01-29)",Whirlpool Corporation
+WMB,WMB,32198295424.0,"cierre 26.50 × 1,215,030,016 acc. (2021-12-05)",Williams Companies
+WLTW,WTW,29353436332.6416,"cierre 235.57 × 124,606,000 acc. (2022-01-11)",Willis Towers Watson
+WYNN,WYNN,10151302271.743774,"cierre 87.77 × 115,658,000 acc. (2021-12-05)",Wynn Resorts
+XEL,XEL,36959770055.17969,"cierre 67.94 × 544,006,016 acc. (2022-01-30)",Xcel Energy
+XLNX,XLNX,,sin precios (Yahoo no tiene el histórico),Xilinx
+XYL,XYL,21078188204.81836,"cierre 116.89 × 180,324,992 acc. (2021-12-05)",Xylem
+YUM,YUM,40021447039.93164,"cierre 136.53 × 293,132,992 acc. (2021-12-04)",Yum! Brands
+ZBRA,ZBRA,31204493154.72412,"cierre 583.90 × 53,441,500 acc. (2021-12-05)",Zebra Technologies
+ZBH,ZBH,26976290597.844543,"cierre 129.13 × 208,908,000 acc. (2021-12-05)",Zimmer Biomet
+ZION,ZION,9740389162.174072,"cierre 64.24 × 151,624,992 acc. (2022-01-26)",Zions Bancorp
+ZTS,ZTS,110725680946.9336,"cierre 234.03 × 473,126,016 acc. (2021-12-03)",Zoetis
